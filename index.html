@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jint — Configurateur de Prestations</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+@font-face {
+  font-family: 'Roobert';
+  src: url('https://fonts.cdnfonts.com/css/roobert') format('woff2');
+}
+
+:root {
+  --yellow:      #F9C34E;
+  --yellow-light:#FEFFDD;
+  --blue-light:  #97E0FF;
+  --grey-beige:  #ECEBE0;
+  --black:       #141817;
+  --white:       #FFFFFF;
+  --green:       #1a7a3c;
+  --green-bg:    #d4f5e0;
+  --red:         #c0392b;
+  --red-bg:      #fde8e6;
+  --muted:       #6b6b5e;
+  --border:      #dddcce;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Geist', 'Inter', sans-serif;
+  background: var(--grey-beige);
+  color: var(--black);
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--black);
+  padding: 0 2.5rem;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 16px rgba(0,0,0,.3);
+}
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  height: 60px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+.logo-mark {
+  background: var(--yellow);
+  color: var(--black);
+  font-family: 'Roobert', 'Geist', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: .3rem .7rem;
+  border-radius: 6px;
+  letter-spacing: -.02em;
+}
+.logo-sub {
+  font-size: .78rem;
+  color: rgba(255,255,255,.85);
+  letter-spacing: .01em;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+.client-input {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  color: #fff;
+  font-family: 'Geist', sans-serif;
+  font-size: .8rem;
+  padding: .4rem .9rem;
+  border-radius: 6px;
+  width: 200px;
+  outline: none;
+  transition: border-color .2s;
+}
+.client-input::placeholder { color: rgba(255,255,255,.3); }
+.client-input:focus { border-color: var(--yellow); }
+.btn {
+  font-family: 'Geist', sans-serif;
+  font-size: .78rem;
+  font-weight: 500;
+  padding: .45rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: all .18s;
+  white-space: nowrap;
+}
+.btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.4);
+  color: rgba(255,255,255,.9);
+}
+.btn-ghost:hover { border-color: var(--yellow); color: var(--yellow); }
+.btn-yellow {
+  background: var(--yellow);
+  color: var(--black);
+  font-weight: 600;
+}
+.btn-yellow:hover { background: #f5b832; }
+
+/* ── TABS ── */
+.tabs-wrap {
+  background: var(--black);
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.tabs {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  padding: 0 2.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  gap: .25rem;
+}
+.tab {
+  padding: .7rem 1.4rem;
+  font-size: .8rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.75);
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  transition: all .18s;
+  white-space: nowrap;
+  user-select: none;
+  letter-spacing: .01em;
+}
+.tab:hover { color: rgba(255,255,255,.8); }
+.tab.active { color: var(--yellow); border-bottom-color: var(--yellow); }
+
+/* ── LAYOUT ── */
+.main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem 4rem;
+}
+
+/* ── PANELS ── */
+.pkg-panel { display: none; }
+.pkg-panel.active { display: block; animation: fadeUp .22s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+/* ── PKG HEADER ── */
+.pkg-header {
+  background: var(--black);
+  border-radius: 12px 12px 0 0;
+  padding: 1.6rem 2rem;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: start;
+  gap: 1.5rem;
+}
+.pkg-title {
+  font-family: 'Roobert', 'Geist', sans-serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--yellow);
+  letter-spacing: -.02em;
+}
+.pkg-desc {
+  font-size: .8rem;
+  color: rgba(255,255,255,.9);
+  margin-top: .3rem;
+  line-height: 1.5;
+  max-width: 500px;
+}
+
+.badge-card {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(249,195,78,.25);
+  border-radius: 8px;
+  padding: .75rem 1.25rem;
+  text-align: right;
+  min-width: 140px;
+}
+.badge-card .lbl { font-size: .65rem; color: rgba(249,195,78,.7); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
+.badge-card .val { font-family: 'Roobert', 'Geist', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--yellow); line-height: 1.1; }
+.badge-card .sub { font-size: .7rem; color: rgba(249,195,78,.7); margin-top: .1rem; font-weight: 500; }
+
+/* ── TABLE ── */
+.pkg-table-wrap {
+  background: var(--white);
+  border-radius: 0 0 12px 12px;
+  border: 1px solid var(--border);
+  border-top: none;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+/* Column headers */
+.col-headers {
+  display: grid;
+  grid-template-columns: 56px 1fr 100px 90px 100px 100px 110px;
+  padding: .55rem 1.6rem;
+  background: var(--grey-beige);
+  border-bottom: 1.5px solid var(--border);
+  gap: .5rem;
+}
+.col-hdr {
+  font-size: .67rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--muted);
+}
+.col-hdr.right { text-align: right; }
+.col-hdr.center { text-align: center; }
+
+/* Phase group */
+.phase-header {
+  padding: .4rem 1.6rem;
+  font-size: .68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  background: #f7f6f0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Row */
+.presta-row {
+  display: grid;
+  grid-template-columns: 56px 1fr 100px 90px 100px 100px 110px;
+  align-items: center;
+  padding: .65rem 1.6rem;
+  border-bottom: 1px solid #f0ede5;
+  transition: background .12s;
+  gap: .5rem;
+}
+.presta-row:last-child { border-bottom: none; }
+.presta-row:hover { background: #faf9f4; }
+
+/* Toggle */
+.toggle { position: relative; width: 52px; height: 28px; cursor: pointer; flex-shrink: 0; display: inline-block; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute; inset: 0;
+  background: var(--black);
+  border-radius: 28px;
+  transition: background .2s;
+  border: 2.5px solid var(--black);
+}
+.slider::before {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  left: 2px; top: 2px;
+  background: var(--yellow);
+  border-radius: 50%;
+  transition: transform .2s;
+}
+.toggle input:checked + .slider { background: var(--yellow); border-color: var(--black); }
+.toggle input:checked + .slider::before { background: var(--black); transform: translateX(24px); }
+
+.presta-name { font-size: .85rem; font-weight: 500; line-height: 1.3; }
+.presta-note { font-size: .72rem; color: var(--muted); margin-top: .1rem; }
+
+/* Counter */
+.counter-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .3rem;
+}
+.counter-wrap.hidden { visibility: hidden; }
+.counter-btn {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  font-size: .85rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--black);
+  transition: all .15s;
+  font-family: 'Geist', sans-serif;
+}
+.counter-btn:hover { border-color: var(--yellow); background: var(--yellow-light); }
+.counter-val { font-size: .82rem; font-weight: 600; min-width: 18px; text-align: center; }
+
+.badge-sm {
+  display: inline-block;
+  font-size: .62rem;
+  font-weight: 600;
+  padding: .12rem .45rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.badge-client { background: var(--yellow-light); color: #8a6a00; }
+.badge-opt { background: #f0ede5; color: var(--muted); }
+.badge-incl { background: var(--yellow); color: var(--black); }
+
+.cell-right { text-align: right; font-size: .82rem; }
+.cell-center { text-align: center; font-size: .82rem; }
+.cell-muted { color: var(--muted); }
+.cell-zero { color: #ccc; }
+.cell-bold { font-weight: 600; }
+.cell-client { color: #c8922a; font-weight: 700; }
+
+/* Footer */
+.pkg-footer {
+  display: grid;
+  grid-template-columns: 56px 1fr 100px 90px 100px 100px 110px;
+  align-items: center;
+  padding: .9rem 1.6rem;
+  background: var(--black);
+  border-radius: 0 0 12px 12px;
+  gap: .5rem;
+}
+.footer-label {
+  grid-column: 1/3;
+  font-size: .8rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.6);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.footer-val {
+  font-family: 'Roobert', 'Geist', sans-serif;
+  font-weight: 700;
+  color: var(--yellow);
+  text-align: right;
+}
+.footer-val.prestataire { font-size: 1rem; }
+.footer-val.client { font-size: 1rem; color: var(--yellow); }
+.footer-val.price { font-size: 1.2rem; }
+.footer-val.weeks { font-size: .9rem; color: rgba(255,255,255,.55); }
+.footer-min { grid-column: 1/-1; font-size: .7rem; color: rgba(255,255,255,.35); margin-top: -.2rem; }
+
+/* ── SUMMARY PANEL (print) ── */
+.summary-panel {
+  background: var(--white);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+}
+.summary-title {
+  font-family: 'Roobert', 'Geist', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── LEGEND ── */
+.legend {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: .75rem;
+  color: var(--muted);
+  padding: .9rem 1.4rem;
+  background: var(--white);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-top: 1rem;
+}
+
+/* ── PRINT ── */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  header, .tabs-wrap, .legend, .btn, .counter-btn, .counter-wrap, .toggle { display: none !important; }
+  body { background: white !important; font-size: 11px; }
+  .main { padding: 0 !important; }
+  .pkg-panel { display: none !important; }
+  .pkg-panel.active { display: block !important; }
+
+  /* Package header */
+  .pkg-header {
+    background: #141817 !important;
+    border-radius: 8px 8px 0 0 !important;
+    padding: 1rem 1.2rem !important;
+    display: grid !important;
+    grid-template-columns: 1fr auto auto !important;
+    gap: 1rem !important;
+  }
+  .pkg-title { color: #F9C34E !important; font-size: 1.1rem !important; }
+  .pkg-desc { color: rgba(255,255,255,.85) !important; font-size: .8rem !important; }
+  .badge-card { background: rgba(255,255,255,.08) !important; border: 1px solid rgba(249,195,78,.25) !important; }
+  .badge-card .val { color: #F9C34E !important; font-size: 1.1rem !important; }
+  .badge-card .lbl { color: rgba(249,195,78,.7) !important; }
+  .badge-card .sub { color: rgba(249,195,78,.7) !important; }
+
+  /* Grille commune : Prestation | J/H Presta | J/H Client | Montant HT */
+  .col-headers,
+  .presta-row,
+  .pkg-footer {
+    display: grid !important;
+    grid-template-columns: 1fr 100px 100px 110px !important;
+    padding: .45rem 1rem !important;
+  }
+
+  /* col-headers : masquer toggle(1), sessions(3), statut(7) — garder presta(2), jhpresta(4), jhclient(5), montant(6) */
+  .col-headers { background: #f0ede5 !important; padding: .5rem 1rem !important; }
+  .col-headers > *:nth-child(1) { display: none !important; }
+  .col-headers > *:nth-child(2) { grid-column: 1 !important; }
+  .col-headers > *:nth-child(3) { display: none !important; }
+  .col-headers > *:nth-child(4) { grid-column: 2 !important; display: block !important; }
+  .col-headers > *:nth-child(5) { grid-column: 3 !important; }
+  .col-headers > *:nth-child(6) { grid-column: 4 !important; }
+  .col-headers > *:nth-child(7) { display: none !important; }
+
+  /* presta-row : masquer toggle(1), sessions(3), statut(7) */
+  .presta-row > *:nth-child(1) { display: none !important; }
+  .presta-row > *:nth-child(2) { grid-column: 1 !important; }
+  .presta-row > *:nth-child(3) { display: none !important; }
+  .presta-row > *:nth-child(4) { grid-column: 2 !important; display: block !important; }
+  .presta-row > *:nth-child(5) { grid-column: 3 !important; }
+  .presta-row > *:nth-child(6) { grid-column: 4 !important; }
+  .presta-row > *:nth-child(7) { display: none !important; }
+
+  .phase-header {
+    padding: .3rem 1rem !important;
+    font-size: .65rem !important;
+    background: #f7f6f0 !important;
+    border-top: 1px solid #ddd !important;
+    border-bottom: 1px solid #ddd !important;
+    page-break-inside: avoid;
+  }
+
+  .presta-name { font-size: .82rem !important; }
+  .cell-client { color: #c8922a !important; font-weight: 700 !important; }
+  .cell-zero { color: #bbb !important; }
+  .cell-bold { font-weight: 700 !important; }
+
+  /* Footer */
+  .pkg-footer {
+    background: #141817 !important;
+    border-radius: 0 0 8px 8px !important;
+    padding: .7rem 1rem !important;
+    page-break-inside: avoid;
+  }
+  .footer-label { grid-column: 1 !important; color: rgba(255,255,255,.8) !important; font-size: .8rem !important; font-weight: 600 !important; align-self: center !important; }
+  .footer-val.weeks { display: none !important; }
+  .footer-val.prestataire { grid-column: 2 !important; color: #F9C34E !important; font-size: .95rem !important; text-align: right !important; }
+  .footer-val.client { grid-column: 3 !important; color: #c8922a !important; font-size: .95rem !important; text-align: right !important; }
+  .footer-val.price { grid-column: 4 !important; color: #F9C34E !important; font-size: 1.1rem !important; text-align: right !important; }
+  .footer-min { grid-column: 1/-1 !important; color: rgba(255,255,255,.4) !important; font-size: .7rem !important; }
+
+  /* Hide inactive rows */
+  .presta-row[data-active="false"] { display: none !important; }
+  .pkg-table-wrap { border: 1px solid #ccc !important; border-top: none !important; }
+}
+
+.print-summary { display: none; }
+
+@media (max-width: 900px) {
+  .col-headers, .presta-row, .pkg-footer {
+    grid-template-columns: 44px 1fr 80px 80px 90px;
+  }
+  .col-hdr:nth-child(3), .presta-row > *:nth-child(3) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark">Jint</div>
+      <div class="logo-sub">Configurateur de Prestations</div>
+    </div>
+    <div class="header-right">
+      <input class="client-input" id="clientName" type="text" placeholder="Nom du client..." oninput="updateClientName()">
+      <button class="btn btn-ghost" onclick="resetAll()">↺ Réinitialiser</button>
+      <button class="btn btn-yellow" onclick="window.print()">🖨 Imprimer</button>
+    </div>
+  </div>
+</header>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabs"></div>
+</div>
+
+<div class="main" id="panels"></div>
+
+<script>
+const TJM = 1000;
+
+// clientHours: charge client en J/H (0 = pas présent)
+// counter: true = compteur de sessions activé
+// isCounter: si true, jh = jh_unit × sessions
+
+const PACKAGES = [
+  {
+    id: "vitrine", name: "Site Vitrine",
+    desc: "Page d'accueil soignée + pages annexes au besoin. Idéal pour une première vitrine ou un projet pilote.",
+    weeksBase: 2, weeksMax: 4,
+    lignes: [
+      { phase:"Cadrage", name:"Kick-off",                              jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Cadrage", name:"Atelier recueil des besoins",           jh:0.25, clientJh:0.25, mandatory:false, counter:false },
+      { phase:"Cadrage", name:"Atelier architecture des pages",        jh:0.25, clientJh:0.25, mandatory:false, counter:false },
+      { phase:"Cadrage", name:"Atelier page d'accueil",                jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Cadrage", name:"Comité de pilotage",                    jh:0.25, clientJh:0.25, mandatory:true,  counter:true  },
+      { phase:"Prototypage & Validation", name:"Maquettage",           jh:1.00, clientJh:0,    mandatory:true,  counter:false },
+      { phase:"Prototypage & Validation", name:"Atelier validation maquettes", jh:0.25, clientJh:0.25, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Création du site SharePoint", jh:0.50, clientJh:0, mandatory:false, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page d'accueil",      jh:1.00, clientJh:0,    mandatory:true,  counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Actualités",    jh:1.00, clientJh:0, mandatory:false, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Métier",        jh:1.00, clientJh:0, mandatory:false, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Trombinoscope", jh:1.00, clientJh:0, mandatory:false, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Espace FAQ",    jh:1.00, clientJh:0, mandatory:false, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Dashboard",     jh:1.00, clientJh:0, mandatory:false, counter:false },
+      { phase:"Recette & Validation", name:"Recette et validation finale",      jh:0.50, clientJh:0.25, mandatory:true, counter:false },
+      { phase:"Formation", name:"Formation administrateurs",            jh:0.50, clientJh:0.50, mandatory:false, counter:true  },
+      { phase:"Formation", name:"Formation contributeurs",              jh:0.50, clientJh:0.50, mandatory:false, counter:true  },
+      { phase:"Formation", name:"Présentation utilisateurs finaux",    jh:0.25, clientJh:0.25, mandatory:false, counter:true  },
+      { phase:"Formation", name:"Production documentation & supports", jh:0.50, clientJh:0,    mandatory:false, counter:false },
+    ]
+  },
+  {
+    id: "standard", name: "Intranet Standard",
+    desc: "Intranet structuré avec page d'accueil et pages métier (hors GED). Première mise en place complète.",
+    weeksBase: 4, weeksMax: 6,
+    lignes: [
+      { phase:"Cadrage", name:"Kick-off",                              jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Cadrage", name:"Atelier recueil des besoins",           jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Cadrage", name:"Atelier architecture des pages",        jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Cadrage", name:"Atelier page d'accueil",                jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Cadrage", name:"Atelier pages annexes",                 jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Cadrage", name:"Rédaction cahier des charges",          jh:1.00, clientJh:0,    mandatory:false, counter:false },
+      { phase:"Cadrage", name:"Comité de pilotage",                    jh:0.25, clientJh:0.25, mandatory:true,  counter:true  },
+      { phase:"Prototypage & Validation", name:"Maquettage",           jh:1.00, clientJh:0,    mandatory:true,  counter:false },
+      { phase:"Prototypage & Validation", name:"Atelier validation maquettes", jh:0.25, clientJh:0.25, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Création du site SharePoint", jh:0.50, clientJh:0, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page d'accueil",      jh:1.00, clientJh:0,    mandatory:true,  counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Actualités",    jh:1.00, clientJh:0, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Métier",        jh:1.00, clientJh:0, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Trombinoscope", jh:1.00, clientJh:0, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Espace FAQ",    jh:1.00, clientJh:0, mandatory:false, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Dashboard",     jh:1.00, clientJh:0, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Alimentation Active Directory", jh:2.00, clientJh:0, mandatory:false, counter:false },
+      { phase:"Recette & Validation", name:"Recette et validation finale", jh:0.50, clientJh:0.25, mandatory:true, counter:false },
+      { phase:"Formation", name:"Formation administrateurs",            jh:0.50, clientJh:0.50, mandatory:true,  counter:true  },
+      { phase:"Formation", name:"Formation contributeurs",              jh:0.50, clientJh:0.50, mandatory:true,  counter:true  },
+      { phase:"Formation", name:"Présentation utilisateurs finaux",    jh:0.25, clientJh:0.25, mandatory:true,  counter:true  },
+      { phase:"Formation", name:"Production documentation & supports", jh:0.50, clientJh:0,    mandatory:false, counter:false },
+    ]
+  },
+  {
+    id: "complet", name: "Intranet Complet",
+    desc: "Intranet full-service avec GED, métadonnées et architecture documentaire. Projet structurant.",
+    weeksBase: 6, weeksMax: 8,
+    lignes: [
+      { phase:"Cadrage", name:"Kick-off",                              jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Cadrage", name:"Atelier recueil des besoins",           jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Cadrage", name:"Atelier architecture des pages",        jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Cadrage", name:"Atelier page d'accueil",                jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Cadrage", name:"Atelier pages annexes",                 jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Cadrage", name:"Atelier gestion documentaire + métadonnées", jh:0.50, clientJh:0.50, mandatory:true, counter:false },
+      { phase:"Cadrage", name:"Rédaction cahier des charges",          jh:1.00, clientJh:0,    mandatory:false, counter:false },
+      { phase:"Cadrage", name:"Comité de pilotage",                    jh:0.25, clientJh:0.25, mandatory:true,  counter:true  },
+      { phase:"Prototypage & Validation", name:"Maquettage",           jh:1.00, clientJh:0,    mandatory:true,  counter:false },
+      { phase:"Prototypage & Validation", name:"Atelier validation maquettes", jh:0.25, clientJh:0.25, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Création du site SharePoint", jh:0.50, clientJh:0, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page d'accueil",      jh:1.00, clientJh:0,    mandatory:true,  counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Actualités",    jh:1.00, clientJh:0, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Métier",        jh:1.00, clientJh:0, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Trombinoscope", jh:1.00, clientJh:0, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Espace FAQ",    jh:1.00, clientJh:0, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Dashboard",     jh:1.00, clientJh:0, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page gestion documentaire",   jh:2.00, clientJh:0, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Alimentation Active Directory", jh:2.00, clientJh:0, mandatory:false, counter:false },
+      { phase:"Recette & Validation", name:"Recette et validation finale", jh:0.50, clientJh:0.25, mandatory:true, counter:false },
+      { phase:"Formation", name:"Formation administrateurs",            jh:0.50, clientJh:0.50, mandatory:true,  counter:true  },
+      { phase:"Formation", name:"Formation contributeurs",              jh:0.50, clientJh:0.50, mandatory:true,  counter:true  },
+      { phase:"Formation", name:"Présentation utilisateurs finaux",    jh:0.25, clientJh:0.25, mandatory:false, counter:true  },
+      { phase:"Formation", name:"Production documentation & supports", jh:0.50, clientJh:0,    mandatory:true,  counter:false },
+    ]
+  },
+  {
+    id: "ged", name: "GED",
+    desc: "Mise en place de la gestion documentaire SharePoint avec architecture des métadonnées. Tarif minimum 2 000 €.",
+    weeksBase: 1, weeksMax: 2,
+    minimum: 2000,
+    lignes: [
+      { phase:"Cadrage", name:"Kick-off",                                       jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Cadrage", name:"Atelier gestion documentaire + métadonnées",     jh:0.50, clientJh:0.50, mandatory:true,  counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page gestion documentaire",    jh:2.00, clientJh:0,    mandatory:true,  counter:false },
+      { phase:"Recette & Validation", name:"Recette et validation finale",       jh:0.50, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Formation", name:"Production documentation & supports",           jh:0.50, clientJh:0,    mandatory:false, counter:false },
+    ]
+  },
+  {
+    id: "trombi", name: "Trombinoscope",
+    desc: "Mise en place d'un trombinoscope SharePoint. Tarif minimum 3 000 € — peut évoluer selon la complexité de l'AD.",
+    weeksBase: 1, weeksMax: 2,
+    minimum: 3000,
+    lignes: [
+      { phase:"Cadrage", name:"Kick-off",                              jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Cadrage", name:"Atelier recueil des besoins",           jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Page annexe — Trombinoscope", jh:1.00, clientJh:0, mandatory:true, counter:false },
+      { phase:"Paramétrage & Réalisation", name:"Alimentation Active Directory", jh:2.00, clientJh:0, mandatory:true, counter:false, note:"2j minimum — selon complexité" },
+      { phase:"Formation", name:"Formation administrateurs",            jh:0.50, clientJh:0.50, mandatory:false, counter:true  },
+      { phase:"Formation", name:"Formation contributeurs",              jh:0.50, clientJh:0.50, mandatory:false, counter:true  },
+    ]
+  },
+];
+
+// State
+const state = {};
+PACKAGES.forEach(pkg => {
+  state[pkg.id] = pkg.lignes.map(l => ({
+    checked: l.mandatory,
+    sessions: 1,
+  }));
+});
+
+function fmt(n) {
+  return new Intl.NumberFormat('fr-FR', { style:'currency', currency:'EUR', maximumFractionDigits:0 }).format(n);
+}
+function fmtJH(n) {
+  if (!n || n === 0) return '—';
+  return n.toFixed(2).replace('.', ',') + ' J/H';
+}
+
+function getJH(l, s) {
+  return l.counter ? l.jh * s.sessions : l.jh;
+}
+function getClientJH(l, s) {
+  if (!l.clientJh) return 0;
+  return l.counter ? l.clientJh * s.sessions : l.clientJh;
+}
+
+function calcTotals(pkg) {
+  let jh = 0, clientJh = 0, price = 0;
+  pkg.lignes.forEach((l, i) => {
+    const s = state[pkg.id][i];
+    if (s.checked) {
+      jh += getJH(l, s);
+      clientJh += getClientJH(l, s);
+      price += getJH(l, s) * TJM;
+    }
+  });
+  if (pkg.minimum) price = Math.max(pkg.minimum, price);
+  // weeks: rough estimate based on prestataire JH
+  const weeks = pkg.weeksMax ? `${pkg.weeksBase} – ${pkg.weeksMax}` : `${pkg.weeksBase}`;
+  return { jh, clientJh, price, weeks };
+}
+
+function updateTotals(pkg) {
+  const { jh, clientJh, price, weeks } = calcTotals(pkg);
+  const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  set(`badge-amt-${pkg.id}`, fmt(price));
+  set(`badge-jh-${pkg.id}`, fmtJH(jh));
+  set(`foot-jh-${pkg.id}`, fmtJH(jh));
+  set(`foot-cjh-${pkg.id}`, clientJh > 0 ? fmtJH(clientJh) : '—');
+  set(`foot-price-${pkg.id}`, fmt(price));
+  set(`foot-weeks-${pkg.id}`, `${weeks} sem.`);
+
+  pkg.lignes.forEach((l, i) => {
+    const s = state[pkg.id][i];
+    const active = s.checked;
+    const jhVal = getJH(l, s);
+    const cjhVal = getClientJH(l, s);
+
+    const jhEl = document.getElementById(`jh-${pkg.id}-${i}`);
+    if (jhEl) { jhEl.textContent = active ? fmtJH(jhVal) : '—'; jhEl.className = 'cell-right ' + (active ? 'cell-bold' : 'cell-zero'); }
+
+    const cjhEl = document.getElementById(`cjh-${pkg.id}-${i}`);
+    if (cjhEl) { cjhEl.textContent = (active && cjhVal > 0) ? fmtJH(cjhVal) : '—'; cjhEl.className = 'cell-right ' + (active && cjhVal > 0 ? 'cell-client' : 'cell-zero'); }
+
+    const priceEl = document.getElementById(`price-${pkg.id}-${i}`);
+    if (priceEl) { priceEl.textContent = active ? fmt(jhVal * TJM) : '—'; priceEl.className = 'cell-right ' + (active ? 'cell-bold' : 'cell-zero'); }
+  });
+}
+
+function toggle(pkgId, idx) {
+  state[pkgId][idx].checked = !state[pkgId][idx].checked;
+  const row = document.getElementById(`row-${pkgId}-${idx}`);
+  if (row) row.dataset.active = state[pkgId][idx].checked;
+  const counter = document.getElementById(`counter-${pkgId}-${idx}`);
+  if (counter) counter.style.visibility = state[pkgId][idx].checked ? 'visible' : 'hidden';
+  updateTotals(PACKAGES.find(p => p.id === pkgId));
+}
+
+function changeSession(pkgId, idx, delta) {
+  const s = state[pkgId][idx];
+  s.sessions = Math.max(1, s.sessions + delta);
+  document.getElementById(`sess-${pkgId}-${idx}`).textContent = s.sessions;
+  updateTotals(PACKAGES.find(p => p.id === pkgId));
+}
+
+function resetAll() {
+  PACKAGES.forEach(pkg => {
+    state[pkg.id] = pkg.lignes.map(l => ({ checked: l.mandatory, sessions: 1 }));
+    pkg.lignes.forEach((l, i) => {
+      const cb = document.getElementById(`cb-${pkg.id}-${i}`);
+      if (cb) cb.checked = l.mandatory;
+      const row = document.getElementById(`row-${pkg.id}-${i}`);
+      if (row) row.dataset.active = l.mandatory;
+      const sessEl = document.getElementById(`sess-${pkg.id}-${i}`);
+      if (sessEl) sessEl.textContent = '1';
+      const counter = document.getElementById(`counter-${pkg.id}-${i}`);
+      if (counter) counter.style.visibility = l.mandatory ? 'visible' : 'hidden';
+    });
+    updateTotals(pkg);
+  });
+}
+
+function updateClientName() {
+  const name = document.getElementById('clientName').value;
+  document.querySelectorAll('.client-name-display').forEach(el => {
+    el.textContent = name ? `— ${name}` : '';
+  });
+}
+
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.pkg === id));
+  document.querySelectorAll('.pkg-panel').forEach(p => p.classList.toggle('active', p.dataset.pkg === id));
+}
+
+// ── BUILD UI ──────────────────────────────────────────────────────────────────
+const tabsEl   = document.getElementById('tabs');
+const panelsEl = document.getElementById('panels');
+
+PACKAGES.forEach((pkg, pi) => {
+  // Tab
+  const tab = document.createElement('div');
+  tab.className = 'tab' + (pi === 0 ? ' active' : '');
+  tab.dataset.pkg = pkg.id;
+  tab.textContent = pkg.name;
+  tab.onclick = () => switchTab(pkg.id);
+  tabsEl.appendChild(tab);
+
+  // Panel
+  const panel = document.createElement('div');
+  panel.className = 'pkg-panel' + (pi === 0 ? ' active' : '');
+  panel.dataset.pkg = pkg.id;
+
+  const { jh: iJH, clientJh: iCJH, price: iPrice, weeks: iWeeks } = calcTotals(pkg);
+
+  // Group by phase
+  const phases = [], phaseMap = {};
+  pkg.lignes.forEach((l, i) => {
+    if (!phaseMap[l.phase]) { phaseMap[l.phase] = []; phases.push(l.phase); }
+    phaseMap[l.phase].push({ ...l, idx: i });
+  });
+
+  let rowsHTML = `
+    <div class="col-headers">
+      <div class="col-hdr"></div>
+      <div class="col-hdr">Prestation</div>
+      <div class="col-hdr center">Sessions</div>
+      <div class="col-hdr right">J/H Presta</div>
+      <div class="col-hdr right">J/H Client</div>
+      <div class="col-hdr right">Montant HT</div>
+      <div class="col-hdr right">Statut</div>
+    </div>`;
+
+  phases.forEach(phase => {
+    rowsHTML += `<div class="phase-header">${phase}</div>`;
+    phaseMap[phase].forEach(l => {
+      const s = state[pkg.id][l.idx];
+      const jhVal = getJH(l, s);
+      const cjhVal = getClientJH(l, s);
+      const badge = l.mandatory
+        ? `<span class="badge-sm badge-incl">Inclus</span>`
+        : `<span class="badge-sm badge-opt">Optionnel</span>`;
+      const clientBadge = '';
+
+      const counter = l.counter
+        ? `<div class="counter-wrap" id="counter-${pkg.id}-${l.idx}" style="visibility:${s.checked ? 'visible' : 'hidden'}">
+            <button class="counter-btn" onclick="changeSession('${pkg.id}',${l.idx},-1)">−</button>
+            <span class="counter-val" id="sess-${pkg.id}-${l.idx}">1</span>
+            <button class="counter-btn" onclick="changeSession('${pkg.id}',${l.idx},1)">+</button>
+           </div>`
+        : `<div class="counter-wrap hidden"><span>—</span></div>`;
+
+      rowsHTML += `
+        <div class="presta-row" id="row-${pkg.id}-${l.idx}" data-active="${s.checked}">
+          <div>
+            <label class="toggle">
+              <input type="checkbox" id="cb-${pkg.id}-${l.idx}" ${s.checked ? 'checked' : ''}
+                onchange="toggle('${pkg.id}', ${l.idx})">
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div>
+            <div class="presta-name">${l.name}${clientBadge}</div>
+            ${l.note ? `<div class="presta-note">${l.note}</div>` : ''}
+          </div>
+          ${counter}
+          <div class="cell-right ${s.checked ? 'cell-bold' : 'cell-zero'}" id="jh-${pkg.id}-${l.idx}">${s.checked ? fmtJH(jhVal) : '—'}</div>
+          <div class="cell-right ${s.checked && cjhVal > 0 ? 'cell-client' : 'cell-zero'}" id="cjh-${pkg.id}-${l.idx}">${s.checked && cjhVal > 0 ? fmtJH(cjhVal) : '—'}</div>
+          <div class="cell-right ${s.checked ? 'cell-bold' : 'cell-zero'}" id="price-${pkg.id}-${l.idx}">${s.checked ? fmt(jhVal * TJM) : '—'}</div>
+          <div style="text-align:right">${badge}</div>
+        </div>`;
+    });
+  });
+
+  panel.innerHTML = `
+    <div class="pkg-header">
+      <div>
+        <div class="pkg-title">${pkg.name} <span class="client-name-display" style="font-size:.9rem;font-weight:400;color:rgba(249,195,78,.6)"></span></div>
+        <div class="pkg-desc">${pkg.desc}</div>
+      </div>
+      <div class="badge-card">
+        <div class="lbl">Durée estimée</div>
+        <div class="val" id="foot-weeks-${pkg.id}">${iWeeks} sem.</div>
+        <div class="sub">calendrier indicatif</div>
+      </div>
+      <div class="badge-card">
+        <div class="lbl">Estimation HT</div>
+        <div class="val" id="badge-amt-${pkg.id}">${fmt(iPrice)}</div>
+        <div class="sub" id="badge-jh-${pkg.id}">${fmtJH(iJH)}</div>
+      </div>
+    </div>
+    <div class="pkg-table-wrap">
+      ${rowsHTML}
+    </div>
+    <div class="pkg-footer">
+      <div class="footer-label" style="grid-column:1/3">Total estimatif HT${pkg.minimum ? ' *' : ''}</div>
+      <div></div>
+      <div class="footer-val prestataire" id="foot-jh-${pkg.id}">${fmtJH(iJH)}</div>
+      <div class="footer-val client" id="foot-cjh-${pkg.id}">${iCJH > 0 ? fmtJH(iCJH) : '—'}</div>
+      <div class="footer-val price" id="foot-price-${pkg.id}">${fmt(iPrice)}</div>
+      <div></div>
+      ${pkg.minimum ? `<div class="footer-min">* Minimum forfaitaire : ${fmt(pkg.minimum)} — majoré selon complexité AD</div>` : ''}
+    </div>`;
+
+  panelsEl.appendChild(panel);
+});
+
+// Legend
+panelsEl.insertAdjacentHTML('beforeend', `
+  <div class="legend">
+    <span>🔘 Toggle = activer / désactiver</span>
+    <span>＋／－ = nombre de sessions (copil, formations)</span>
+    <span style="color:#1a6fa8">🔵 J/H Client = charge de présence côté client</span>
+    <span>↺ Réinitialiser remet les défauts du package</span>
+    <span>🖨 Imprimer = résumé imprimable</span>
+  </div>
+`);
+</script>
+</body>
+</html>
