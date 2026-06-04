@@ -3,859 +3,190 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jint — Configurateur de Prestations</title>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Jint — Simulateur de Prestations V2</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-@font-face {
-  font-family: 'Roobert';
-  src: url('https://fonts.cdnfonts.com/css/roobert') format('woff2');
-}
-
-:root {
-  --yellow:      #F9C34E;
-  --yellow-light:#FEFFDD;
-  --blue-light:  #97E0FF;
-  --grey-beige:  #ECEBE0;
-  --black:       #141817;
-  --white:       #FFFFFF;
-  --green:       #1a7a3c;
-  --green-bg:    #d4f5e0;
-  --red:         #c0392b;
-  --red-bg:      #fde8e6;
-  --muted:       #6b6b5e;
-  --border:      #dddcce;
-}
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Geist', 'Inter', sans-serif;
-  background: var(--grey-beige);
-  color: var(--black);
-  min-height: 100vh;
-  font-size: 14px;
+:root {
+  --yellow:#F9C34E; --yellow-2:#FEFFDD; --beige:#ECEBE0; --black:#141817; --white:#fff;
+  --muted:#6b6b5e; --border:#dddcce; --soft:#f7f6f0; --soft2:#faf9f4;
+  --green:#1a7a3c; --orange:#a96500; --red:#b83228; --blue:#315c9b;
 }
-
-/* ── HEADER ── */
-header {
-  background: var(--black);
-  padding: 0 2.5rem;
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 2px 16px rgba(0,0,0,.3);
-}
-.header-inner {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  height: 60px;
-}
-.logo {
-  display: flex;
-  align-items: center;
-  gap: .75rem;
-}
-.logo-mark {
-  background: var(--yellow);
-  color: var(--black);
-  font-family: 'Roobert', 'Geist', sans-serif;
-  font-weight: 700;
-  font-size: 1.1rem;
-  padding: .3rem .7rem;
-  border-radius: 6px;
-  letter-spacing: -.02em;
-}
-.logo-sub {
-  font-size: .78rem;
-  color: rgba(255,255,255,.85);
-  letter-spacing: .01em;
-}
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: .75rem;
-}
-.client-input {
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.15);
-  color: #fff;
-  font-family: 'Geist', sans-serif;
-  font-size: .8rem;
-  padding: .4rem .9rem;
-  border-radius: 6px;
-  width: 200px;
-  outline: none;
-  transition: border-color .2s;
-}
-.client-input::placeholder { color: rgba(255,255,255,.3); }
-.client-input:focus { border-color: var(--yellow); }
-.btn {
-  font-family: 'Geist', sans-serif;
-  font-size: .78rem;
-  font-weight: 500;
-  padding: .45rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  border: none;
-  transition: all .18s;
-  white-space: nowrap;
-}
-.btn-ghost {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,.4);
-  color: rgba(255,255,255,.9);
-}
-.btn-ghost:hover { border-color: var(--yellow); color: var(--yellow); }
-.btn-yellow {
-  background: var(--yellow);
-  color: var(--black);
-  font-weight: 600;
-}
-.btn-yellow:hover { background: #f5b832; }
-
-/* ── TABS ── */
-.tabs-wrap {
-  background: var(--black);
-  border-top: 1px solid rgba(255,255,255,.06);
-}
-.tabs {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  padding: 0 2.5rem;
-  overflow-x: auto;
-  scrollbar-width: none;
-  gap: .25rem;
-}
-.tab {
-  padding: .7rem 1.4rem;
-  font-size: .8rem;
-  font-weight: 500;
-  color: rgba(255,255,255,.75);
-  cursor: pointer;
-  border-bottom: 2.5px solid transparent;
-  transition: all .18s;
-  white-space: nowrap;
-  user-select: none;
-  letter-spacing: .01em;
-}
-.tab:hover { color: rgba(255,255,255,.8); }
-.tab.active { color: var(--yellow); border-bottom-color: var(--yellow); }
-
-/* ── LAYOUT ── */
-.main {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem 2.5rem 4rem;
-}
-
-/* ── PANELS ── */
-.pkg-panel { display: none; }
-.pkg-panel.active { display: block; animation: fadeUp .22s ease; }
-@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
-
-/* ── PKG HEADER ── */
-.pkg-header {
-  background: var(--black);
-  border-radius: 12px 12px 0 0;
-  padding: 1.6rem 2rem;
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: start;
-  gap: 1.5rem;
-}
-.pkg-title {
-  font-family: 'Roobert', 'Geist', sans-serif;
-  font-weight: 700;
-  font-size: 1.4rem;
-  color: var(--yellow);
-  letter-spacing: -.02em;
-}
-.pkg-desc {
-  font-size: .8rem;
-  color: rgba(255,255,255,.9);
-  margin-top: .3rem;
-  line-height: 1.5;
-  max-width: 500px;
-}
-
-.badge-card {
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(249,195,78,.25);
-  border-radius: 8px;
-  padding: .75rem 1.25rem;
-  text-align: right;
-  min-width: 140px;
-}
-.badge-card .lbl { font-size: .65rem; color: rgba(249,195,78,.7); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
-.badge-card .val { font-family: 'Roobert', 'Geist', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--yellow); line-height: 1.1; }
-.badge-card .sub { font-size: .7rem; color: rgba(249,195,78,.7); margin-top: .1rem; font-weight: 500; }
-
-/* ── TABLE ── */
-.pkg-table-wrap {
-  background: var(--white);
-  border-radius: 0 0 12px 12px;
-  border: 1px solid var(--border);
-  border-top: none;
-  overflow: hidden;
-  margin-bottom: 2rem;
-}
-
-/* Column headers */
-.col-headers {
-  display: grid;
-  grid-template-columns: 56px 1fr 100px 90px 100px 100px 110px;
-  padding: .55rem 1.6rem;
-  background: var(--grey-beige);
-  border-bottom: 1.5px solid var(--border);
-  gap: .5rem;
-}
-.col-hdr {
-  font-size: .67rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .07em;
-  color: var(--muted);
-}
-.col-hdr.right { text-align: right; }
-.col-hdr.center { text-align: center; }
-
-/* Phase group */
-.phase-header {
-  padding: .4rem 1.6rem;
-  font-size: .68rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  color: var(--muted);
-  background: #f7f6f0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-/* Row */
-.presta-row {
-  display: grid;
-  grid-template-columns: 56px 1fr 100px 90px 100px 100px 110px;
-  align-items: center;
-  padding: .65rem 1.6rem;
-  border-bottom: 1px solid #f0ede5;
-  transition: background .12s;
-  gap: .5rem;
-}
-.presta-row:last-child { border-bottom: none; }
-.presta-row:hover { background: #faf9f4; }
-
-/* Toggle */
-.toggle { position: relative; width: 52px; height: 28px; cursor: pointer; flex-shrink: 0; display: inline-block; }
-.toggle input { opacity: 0; width: 0; height: 0; }
-.slider {
-  position: absolute; inset: 0;
-  background: var(--black);
-  border-radius: 28px;
-  transition: background .2s;
-  border: 2.5px solid var(--black);
-}
-.slider::before {
-  content: '';
-  position: absolute;
-  width: 18px; height: 18px;
-  left: 2px; top: 2px;
-  background: var(--yellow);
-  border-radius: 50%;
-  transition: transform .2s;
-}
-.toggle input:checked + .slider { background: var(--yellow); border-color: var(--black); }
-.toggle input:checked + .slider::before { background: var(--black); transform: translateX(24px); }
-
-.presta-name { font-size: .85rem; font-weight: 500; line-height: 1.3; }
-.presta-note { font-size: .72rem; color: var(--muted); margin-top: .1rem; }
-
-/* Counter */
-.counter-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: .3rem;
-}
-.counter-wrap.hidden { visibility: hidden; }
-.counter-btn {
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  border: 1.5px solid var(--border);
-  background: var(--white);
-  font-size: .85rem;
-  line-height: 1;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--black);
-  transition: all .15s;
-  font-family: 'Geist', sans-serif;
-}
-.counter-btn:hover { border-color: var(--yellow); background: var(--yellow-light); }
-.counter-val { font-size: .82rem; font-weight: 600; min-width: 18px; text-align: center; }
-
-.badge-sm {
-  display: inline-block;
-  font-size: .62rem;
-  font-weight: 600;
-  padding: .12rem .45rem;
-  border-radius: 20px;
-  text-transform: uppercase;
-  letter-spacing: .04em;
-  white-space: nowrap;
-}
-.badge-client { background: var(--yellow-light); color: #8a6a00; }
-.badge-opt { background: #f0ede5; color: var(--muted); }
-.badge-incl { background: var(--yellow); color: var(--black); }
-
-.cell-right { text-align: right; font-size: .82rem; }
-.cell-center { text-align: center; font-size: .82rem; }
-.cell-muted { color: var(--muted); }
-.cell-zero { color: #ccc; }
-.cell-bold { font-weight: 600; }
-.cell-client { color: #c8922a; font-weight: 700; }
-
-/* Footer */
-.pkg-footer {
-  display: grid;
-  grid-template-columns: 56px 1fr 100px 90px 100px 100px 110px;
-  align-items: center;
-  padding: .9rem 1.6rem;
-  background: var(--black);
-  border-radius: 0 0 12px 12px;
-  gap: .5rem;
-}
-.footer-label {
-  grid-column: 1/3;
-  font-size: .8rem;
-  font-weight: 600;
-  color: rgba(255,255,255,.6);
-  text-transform: uppercase;
-  letter-spacing: .06em;
-}
-.footer-val {
-  font-family: 'Roobert', 'Geist', sans-serif;
-  font-weight: 700;
-  color: var(--yellow);
-  text-align: right;
-}
-.footer-val.prestataire { font-size: 1rem; }
-.footer-val.client { font-size: 1rem; color: var(--yellow); }
-.footer-val.price { font-size: 1.2rem; }
-.footer-val.weeks { font-size: .9rem; color: rgba(255,255,255,.55); }
-.footer-min { grid-column: 1/-1; font-size: .7rem; color: rgba(255,255,255,.35); margin-top: -.2rem; }
-
-/* ── SUMMARY PANEL (print) ── */
-.summary-panel {
-  background: var(--white);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  padding: 1.5rem 2rem;
-  margin-bottom: 2rem;
-}
-.summary-title {
-  font-family: 'Roobert', 'Geist', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* ── LEGEND ── */
-.legend {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  font-size: .75rem;
-  color: var(--muted);
-  padding: .9rem 1.4rem;
-  background: var(--white);
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  margin-top: 1rem;
-}
-
-/* ── PRINT ── */
-@media print {
-  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  header, .tabs-wrap, .legend, .btn, .counter-btn, .counter-wrap, .toggle { display: none !important; }
-  body { background: white !important; font-size: 11px; }
-  .main { padding: 0 !important; }
-  .pkg-panel { display: none !important; }
-  .pkg-panel.active { display: block !important; }
-
-  /* Package header */
-  .pkg-header {
-    background: #141817 !important;
-    border-radius: 8px 8px 0 0 !important;
-    padding: 1rem 1.2rem !important;
-    display: grid !important;
-    grid-template-columns: 1fr auto auto !important;
-    gap: 1rem !important;
-  }
-  .pkg-title { color: #F9C34E !important; font-size: 1.1rem !important; }
-  .pkg-desc { color: rgba(255,255,255,.85) !important; font-size: .8rem !important; }
-  .badge-card { background: rgba(255,255,255,.08) !important; border: 1px solid rgba(249,195,78,.25) !important; }
-  .badge-card .val { color: #F9C34E !important; font-size: 1.1rem !important; }
-  .badge-card .lbl { color: rgba(249,195,78,.7) !important; }
-  .badge-card .sub { color: rgba(249,195,78,.7) !important; }
-
-  /* Grille commune : Prestation | J/H Presta | J/H Client | Montant HT */
-  .col-headers,
-  .presta-row,
-  .pkg-footer {
-    display: grid !important;
-    grid-template-columns: 1fr 100px 100px 110px !important;
-    padding: .45rem 1rem !important;
-  }
-
-  /* col-headers : masquer toggle(1), sessions(3), statut(7) — garder presta(2), jhpresta(4), jhclient(5), montant(6) */
-  .col-headers { background: #f0ede5 !important; padding: .5rem 1rem !important; }
-  .col-headers > *:nth-child(1) { display: none !important; }
-  .col-headers > *:nth-child(2) { grid-column: 1 !important; }
-  .col-headers > *:nth-child(3) { display: none !important; }
-  .col-headers > *:nth-child(4) { grid-column: 2 !important; display: block !important; }
-  .col-headers > *:nth-child(5) { grid-column: 3 !important; }
-  .col-headers > *:nth-child(6) { grid-column: 4 !important; }
-  .col-headers > *:nth-child(7) { display: none !important; }
-
-  /* presta-row : masquer toggle(1), sessions(3), statut(7) */
-  .presta-row > *:nth-child(1) { display: none !important; }
-  .presta-row > *:nth-child(2) { grid-column: 1 !important; }
-  .presta-row > *:nth-child(3) { display: none !important; }
-  .presta-row > *:nth-child(4) { grid-column: 2 !important; display: block !important; }
-  .presta-row > *:nth-child(5) { grid-column: 3 !important; }
-  .presta-row > *:nth-child(6) { grid-column: 4 !important; }
-  .presta-row > *:nth-child(7) { display: none !important; }
-
-  .phase-header {
-    padding: .3rem 1rem !important;
-    font-size: .65rem !important;
-    background: #f7f6f0 !important;
-    border-top: 1px solid #ddd !important;
-    border-bottom: 1px solid #ddd !important;
-    page-break-inside: avoid;
-  }
-
-  .presta-name { font-size: .82rem !important; }
-  .cell-client { color: #c8922a !important; font-weight: 700 !important; }
-  .cell-zero { color: #bbb !important; }
-  .cell-bold { font-weight: 700 !important; }
-
-  /* Footer */
-  .pkg-footer {
-    background: #141817 !important;
-    border-radius: 0 0 8px 8px !important;
-    padding: .7rem 1rem !important;
-    page-break-inside: avoid;
-  }
-  .footer-label { grid-column: 1 !important; color: rgba(255,255,255,.8) !important; font-size: .8rem !important; font-weight: 600 !important; align-self: center !important; }
-  .footer-val.weeks { display: none !important; }
-  .footer-val.prestataire { grid-column: 2 !important; color: #F9C34E !important; font-size: .95rem !important; text-align: right !important; }
-  .footer-val.client { grid-column: 3 !important; color: #c8922a !important; font-size: .95rem !important; text-align: right !important; }
-  .footer-val.price { grid-column: 4 !important; color: #F9C34E !important; font-size: 1.1rem !important; text-align: right !important; }
-  .footer-min { grid-column: 1/-1 !important; color: rgba(255,255,255,.4) !important; font-size: .7rem !important; }
-
-  /* Hide inactive rows */
-  .presta-row[data-active="false"] { display: none !important; }
-  .pkg-table-wrap { border: 1px solid #ccc !important; border-top: none !important; }
-}
-
-.print-summary { display: none; }
-
-@media (max-width: 900px) {
-  .col-headers, .presta-row, .pkg-footer {
-    grid-template-columns: 44px 1fr 80px 80px 90px;
-  }
-  .col-hdr:nth-child(3), .presta-row > *:nth-child(3) { display: none; }
-}
+body { font-family:'Geist','Inter',sans-serif; background:var(--beige); color:var(--black); min-height:100vh; font-size:14px; }
+header { background:var(--black); padding:0 2.5rem; position:sticky; top:0; z-index:100; box-shadow:0 2px 16px rgba(0,0,0,.28); }
+.header-inner { max-width:1180px; margin:0 auto; min-height:64px; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+.logo { display:flex; align-items:center; gap:.75rem; }
+.logo-mark { background:var(--yellow); color:var(--black); font-weight:700; font-size:1rem; padding:.32rem .72rem; border-radius:7px; letter-spacing:-.02em; }
+.logo-sub { font-size:.78rem; color:rgba(255,255,255,.72); line-height:1.2; }
+.header-right { display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; justify-content:flex-end; }
+.client-input { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); color:#fff; font-family:inherit; font-size:.82rem; padding:.45rem .85rem; border-radius:7px; width:210px; outline:none; }
+.client-input::placeholder{color:rgba(255,255,255,.35)} .client-input:focus{border-color:var(--yellow)}
+.btn { font-family:inherit; font-size:.78rem; font-weight:600; padding:.48rem .9rem; border-radius:7px; cursor:pointer; border:none; transition:all .18s; white-space:nowrap; }
+.btn-ghost { background:transparent; border:1px solid rgba(255,255,255,.35); color:rgba(255,255,255,.88); }
+.btn-ghost:hover{border-color:var(--yellow);color:var(--yellow)} .btn-yellow{background:var(--yellow);color:var(--black)} .btn-yellow:hover{filter:brightness(.97)}
+.main { max-width:1180px; margin:0 auto; padding:1.5rem 2.5rem 4rem; }
+.layout { display:grid; grid-template-columns: 350px 1fr; gap:1.25rem; align-items:start; }
+.panel, .table-wrap, .summary, .export-box { background:var(--white); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+.panel { position:sticky; top:82px; }
+.panel-head { padding:1rem 1.1rem; border-bottom:1px solid var(--border); background:var(--soft); }
+.panel-title { font-size:.78rem; text-transform:uppercase; letter-spacing:.08em; font-weight:700; color:var(--muted); }
+.panel-sub { font-size:.8rem; color:var(--muted); margin-top:.3rem; line-height:1.35; }
+.form { padding:1rem 1.1rem; display:grid; gap:.9rem; }
+.field label { display:block; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:.35rem; }
+.field input, .field select, .field textarea { width:100%; font-family:inherit; font-size:.83rem; border:1px solid var(--border); border-radius:8px; padding:.48rem .6rem; background:#fff; color:var(--black); outline:none; }
+.field textarea { min-height:72px; resize:vertical; line-height:1.35; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color:var(--black); }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:.7rem; }
+.assistant-actions { display:flex; gap:.5rem; flex-wrap:wrap; padding-top:.2rem; }
+.btn-dark { background:var(--black); color:white; }
+.btn-soft { background:var(--soft); color:var(--black); border:1px solid var(--border); }
+.suggestion-box { margin-top:.1rem; padding:.75rem; background:var(--yellow-2); border:1px solid #efe0a9; border-radius:10px; font-size:.8rem; color:#433b22; line-height:1.45; display:none; }
+.workspace { display:grid; gap:1rem; }
+.table-wrap { margin-bottom:0; }
+.col-headers, .presta-row, .free-row { display:grid; grid-template-columns:42px 1fr 74px 96px 34px; gap:.5rem; align-items:center; }
+.col-headers { padding:.55rem 1.1rem; background:var(--beige); border-bottom:1.5px solid var(--border); }
+.col-hdr { font-size:.64rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); } .right{text-align:right}
+.phase { border-bottom:1px solid var(--border); }
+.phase-header { width:100%; border:0; display:grid; grid-template-columns:1fr auto; align-items:center; gap:1rem; padding:.72rem 1.1rem; background:var(--soft); cursor:pointer; font-family:inherit; color:var(--black); }
+.phase-header:hover{background:#f1f0e8}
+.phase-left { display:flex; align-items:center; gap:.65rem; }
+.chev { font-size:.72rem; color:var(--muted); transition:transform .18s; } .phase.closed .chev { transform:rotate(-90deg); }
+.phase-name { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; font-weight:800; color:var(--muted); }
+.phase-meta { display:flex; gap:.5rem; align-items:center; font-size:.72rem; color:var(--muted); }
+.pill { display:inline-flex; align-items:center; gap:.25rem; border-radius:999px; padding:.16rem .5rem; background:#fff; border:1px solid var(--border); font-weight:700; color:var(--black); }
+.phase-body { display:block; } .phase.closed .phase-body { display:none; }
+.presta-row { padding:.62rem 1.1rem; border-bottom:1px solid #f0ede5; cursor:pointer; transition:background .12s, opacity .12s; }
+.presta-row:hover{background:var(--soft2)} .presta-row.mandatory{cursor:default} .presta-row[data-active="false"]{opacity:.45}
+.toggle { position:relative; width:36px; height:20px; cursor:pointer; display:inline-block; }
+.toggle input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;background:#c9c7be;border-radius:20px;transition:.2s}.slider:before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s}.toggle input:checked+.slider{background:var(--black)}.toggle input:checked+.slider:before{transform:translateX(16px)}.mandatory .toggle input:checked+.slider{background:var(--yellow)}
+.presta-name { font-size:.84rem; font-weight:600; line-height:1.25; } .presta-note{font-size:.71rem;color:var(--muted);margin-top:.12rem;line-height:1.3}
+.cell-right{text-align:right;font-size:.82rem}.cell-bold{font-weight:700}.cell-zero{color:#bbb}.info-btn{width:25px;height:25px;border-radius:50%;border:1px solid var(--border);background:#fff;color:var(--muted);font-weight:800;cursor:pointer}.info-btn:hover{border-color:var(--black);color:var(--black)}
+.free-row{padding:.55rem 1.1rem;border-bottom:1px solid #f0ede5}.free-input,.free-jh{font-family:inherit;font-size:.82rem;padding:.36rem .55rem;border-radius:7px;border:1px solid var(--border);background:white;outline:none}.free-jh{text-align:right;width:100%}.free-input{width:100%}.free-input:focus,.free-jh:focus{border-color:var(--black)} .qty-wrap{display:flex;align-items:center;justify-content:flex-end;gap:.28rem;font-size:.72rem;color:var(--muted)}.qty-input{width:46px;font-family:inherit;font-size:.78rem;padding:.25rem .25rem;border-radius:7px;border:1px solid var(--border);text-align:center;background:#fff;color:var(--black);outline:none}.qty-input:focus{border-color:var(--black)}
+.summary { background:var(--black); color:white; padding:1.25rem 1.4rem; }
+.summary-top { display:grid; grid-template-columns:repeat(4,1fr); gap:.85rem; margin-bottom:1rem; }
+.metric{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);border-radius:10px;padding:.8rem .9rem}.metric-label{font-size:.64rem;text-transform:uppercase;letter-spacing:.07em;color:rgba(249,195,78,.74);font-weight:800;margin-bottom:.28rem}.metric-val{font-size:1.35rem;font-weight:800;color:var(--yellow);line-height:1.1;font-variant-numeric:tabular-nums}.metric-sub{font-size:.68rem;color:rgba(255,255,255,.45);margin-top:.22rem;line-height:1.25}
+.risk-low{color:#78d394}.risk-mid{color:#ffd166}.risk-high{color:#ff857a}.summary-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:1rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem}.marge-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.48);font-weight:800;margin-bottom:.55rem}.marge-btns{display:flex;gap:.45rem;flex-wrap:wrap}.marge-btn{font-family:inherit;font-size:.74rem;font-weight:700;padding:.36rem .72rem;border-radius:7px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.72);cursor:pointer}.marge-btn:hover{border-color:rgba(255,255,255,.55);color:#fff}.marge-btn.active{background:var(--yellow);border-color:var(--yellow);color:var(--black)}.fourchette{font-size:.8rem;color:rgba(255,255,255,.62);line-height:1.45}.fourchette strong{color:#fff}
+.alerts { margin-top:.8rem; display:grid; gap:.45rem; }.alert { font-size:.76rem; line-height:1.35; padding:.55rem .65rem; border-radius:8px; background:rgba(249,195,78,.11); border:1px solid rgba(249,195,78,.22); color:rgba(255,255,255,.82); }
+.export-box { display:none; padding:1rem; }.export-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.7rem}.export-title{font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;font-weight:800;color:var(--muted)}#exportText{width:100%;min-height:220px;border:1px solid var(--border);border-radius:10px;padding:.85rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;line-height:1.45;resize:vertical;background:#fff}.copy-status{font-size:.75rem;color:var(--green);font-weight:700;display:none}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:300;padding:1rem}.modal{width:min(560px,100%);background:#fff;border-radius:16px;border:1px solid var(--border);box-shadow:0 24px 80px rgba(0,0,0,.35);overflow:hidden}.modal-head{padding:1rem 1.2rem;background:var(--soft);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:1rem}.modal-title{font-weight:800}.modal-close{border:0;background:transparent;font-size:1.2rem;cursor:pointer}.modal-body{padding:1rem 1.2rem;display:grid;gap:.8rem;font-size:.86rem;line-height:1.45}.modal-body ul{padding-left:1.2rem}.mini-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;font-weight:800;color:var(--muted);margin-bottom:.25rem}.included{background:#f5fbf7;border:1px solid #d9eadf;border-radius:10px;padding:.75rem}.excluded{background:#fff8f7;border:1px solid #efd7d3;border-radius:10px;padding:.75rem}
+.legend{display:flex;gap:1.2rem;flex-wrap:wrap;font-size:.73rem;color:var(--muted);padding:.8rem 1rem;background:white;border-radius:10px;border:1px solid var(--border)}
+@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}header,.panel,.legend,.info-btn,.marge-btns,.export-box{display:none!important}body{background:white!important;font-size:11px}.main{padding:0!important}.layout{display:block}.summary{margin-top:1rem}.presta-row[data-active="false"],.free-row[data-active="false"]{display:none!important}.phase.closed .phase-body{display:block!important}.summary-top{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:980px){.layout{grid-template-columns:1fr}.panel{position:static}.summary-top{grid-template-columns:1fr 1fr}.summary-bottom{grid-template-columns:1fr}}
+@media(max-width:640px){header{padding:0 1rem}.header-inner{align-items:flex-start;flex-direction:column;padding:.8rem 0}.main{padding:1rem}.col-headers,.presta-row,.free-row{grid-template-columns:34px 1fr 58px 80px 28px}.client-input{width:100%}.header-right{width:100%}.summary-top{grid-template-columns:1fr}.field-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
 <header>
   <div class="header-inner">
-    <div class="logo">
-      <div class="logo-mark">Jint</div>
-      <div class="logo-sub">Configurateur de Prestations</div>
-    </div>
+    <div class="logo"><div class="logo-mark">Jint</div><div class="logo-sub">Simulateur de prestations<br>V2 — qualification interne</div></div>
     <div class="header-right">
-      <input class="client-input" id="clientName" type="text" placeholder="Nom du client..." oninput="updateClientName()">
+      <input class="client-input" id="clientName" type="text" placeholder="Nom du client..." oninput="update()">
       <button class="btn btn-ghost" onclick="resetAll()">↺ Réinitialiser</button>
+      <button class="btn btn-ghost" onclick="generateExport()">📋 Résumé</button>
       <button class="btn btn-yellow" onclick="window.print()">🖨 Imprimer</button>
     </div>
   </div>
 </header>
-
-<div class="tabs-wrap">
-  <div class="tabs" id="tabs"></div>
-</div>
-
-<div class="main" id="panels"></div>
-
-<script>
-const TJM = 1000;
-
-// clientHours: charge client en J/H (0 = pas présent)
-// counter: true = compteur de sessions activé
-// isCounter: si true, jh = jh_unit × sessions
-
-const PACKAGES = [
-  {
-    id: "vitrine", name: "Site Vitrine",
-    desc: "Page d'accueil soignée + pages annexes au besoin. Idéal pour une première vitrine ou un projet pilote.",
-    weeksBase: 2, weeksMax: 4,
-    lignes: [
-      { phase:"Cadrage", name:"Kick-off",                              jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Cadrage", name:"Atelier recueil des besoins",           jh:0.25, clientJh:0.25, mandatory:false, counter:false },
-      { phase:"Cadrage", name:"Atelier architecture des pages",        jh:0.25, clientJh:0.25, mandatory:false, counter:false },
-      { phase:"Cadrage", name:"Atelier page d'accueil",                jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Cadrage", name:"Comité de pilotage",                    jh:0.25, clientJh:0.25, mandatory:true,  counter:true  },
-      { phase:"Prototypage & Validation", name:"Maquettage",           jh:1.00, clientJh:0,    mandatory:true,  counter:false },
-      { phase:"Prototypage & Validation", name:"Atelier validation maquettes", jh:0.25, clientJh:0.25, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Création du site SharePoint", jh:0.50, clientJh:0, mandatory:false, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page d'accueil",      jh:1.00, clientJh:0,    mandatory:true,  counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Actualités",    jh:1.00, clientJh:0, mandatory:false, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Métier",        jh:1.00, clientJh:0, mandatory:false, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Trombinoscope", jh:1.00, clientJh:0, mandatory:false, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Espace FAQ",    jh:1.00, clientJh:0, mandatory:false, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Dashboard",     jh:1.00, clientJh:0, mandatory:false, counter:false },
-      { phase:"Recette & Validation", name:"Recette et validation finale",      jh:0.50, clientJh:0.25, mandatory:true, counter:false },
-      { phase:"Formation", name:"Formation administrateurs",            jh:0.50, clientJh:0.50, mandatory:false, counter:true  },
-      { phase:"Formation", name:"Formation contributeurs",              jh:0.50, clientJh:0.50, mandatory:false, counter:true  },
-      { phase:"Formation", name:"Présentation utilisateurs finaux",    jh:0.25, clientJh:0.25, mandatory:false, counter:true  },
-      { phase:"Formation", name:"Production documentation & supports", jh:0.50, clientJh:0,    mandatory:false, counter:false },
-    ]
-  },
-  {
-    id: "standard", name: "Intranet Standard",
-    desc: "Intranet structuré avec page d'accueil et pages métier (hors GED). Première mise en place complète.",
-    weeksBase: 4, weeksMax: 6,
-    lignes: [
-      { phase:"Cadrage", name:"Kick-off",                              jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Cadrage", name:"Atelier recueil des besoins",           jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Cadrage", name:"Atelier architecture des pages",        jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Cadrage", name:"Atelier page d'accueil",                jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Cadrage", name:"Atelier pages annexes",                 jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Cadrage", name:"Rédaction cahier des charges",          jh:1.00, clientJh:0,    mandatory:false, counter:false },
-      { phase:"Cadrage", name:"Comité de pilotage",                    jh:0.25, clientJh:0.25, mandatory:true,  counter:true  },
-      { phase:"Prototypage & Validation", name:"Maquettage",           jh:1.00, clientJh:0,    mandatory:true,  counter:false },
-      { phase:"Prototypage & Validation", name:"Atelier validation maquettes", jh:0.25, clientJh:0.25, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Création du site SharePoint", jh:0.50, clientJh:0, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page d'accueil",      jh:1.00, clientJh:0,    mandatory:true,  counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Actualités",    jh:1.00, clientJh:0, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Métier",        jh:1.00, clientJh:0, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Trombinoscope", jh:1.00, clientJh:0, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Espace FAQ",    jh:1.00, clientJh:0, mandatory:false, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Dashboard",     jh:1.00, clientJh:0, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Alimentation Active Directory", jh:2.00, clientJh:0, mandatory:false, counter:false },
-      { phase:"Recette & Validation", name:"Recette et validation finale", jh:0.50, clientJh:0.25, mandatory:true, counter:false },
-      { phase:"Formation", name:"Formation administrateurs",            jh:0.50, clientJh:0.50, mandatory:true,  counter:true  },
-      { phase:"Formation", name:"Formation contributeurs",              jh:0.50, clientJh:0.50, mandatory:true,  counter:true  },
-      { phase:"Formation", name:"Présentation utilisateurs finaux",    jh:0.25, clientJh:0.25, mandatory:true,  counter:true  },
-      { phase:"Formation", name:"Production documentation & supports", jh:0.50, clientJh:0,    mandatory:false, counter:false },
-    ]
-  },
-  {
-    id: "complet", name: "Intranet Complet",
-    desc: "Intranet full-service avec GED, métadonnées et architecture documentaire. Projet structurant.",
-    weeksBase: 6, weeksMax: 8,
-    lignes: [
-      { phase:"Cadrage", name:"Kick-off",                              jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Cadrage", name:"Atelier recueil des besoins",           jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Cadrage", name:"Atelier architecture des pages",        jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Cadrage", name:"Atelier page d'accueil",                jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Cadrage", name:"Atelier pages annexes",                 jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Cadrage", name:"Atelier gestion documentaire + métadonnées", jh:0.50, clientJh:0.50, mandatory:true, counter:false },
-      { phase:"Cadrage", name:"Rédaction cahier des charges",          jh:1.00, clientJh:0,    mandatory:false, counter:false },
-      { phase:"Cadrage", name:"Comité de pilotage",                    jh:0.25, clientJh:0.25, mandatory:true,  counter:true  },
-      { phase:"Prototypage & Validation", name:"Maquettage",           jh:1.00, clientJh:0,    mandatory:true,  counter:false },
-      { phase:"Prototypage & Validation", name:"Atelier validation maquettes", jh:0.25, clientJh:0.25, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Création du site SharePoint", jh:0.50, clientJh:0, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page d'accueil",      jh:1.00, clientJh:0,    mandatory:true,  counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Actualités",    jh:1.00, clientJh:0, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Métier",        jh:1.00, clientJh:0, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Trombinoscope", jh:1.00, clientJh:0, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Espace FAQ",    jh:1.00, clientJh:0, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Dashboard",     jh:1.00, clientJh:0, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page gestion documentaire",   jh:2.00, clientJh:0, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Alimentation Active Directory", jh:2.00, clientJh:0, mandatory:false, counter:false },
-      { phase:"Recette & Validation", name:"Recette et validation finale", jh:0.50, clientJh:0.25, mandatory:true, counter:false },
-      { phase:"Formation", name:"Formation administrateurs",            jh:0.50, clientJh:0.50, mandatory:true,  counter:true  },
-      { phase:"Formation", name:"Formation contributeurs",              jh:0.50, clientJh:0.50, mandatory:true,  counter:true  },
-      { phase:"Formation", name:"Présentation utilisateurs finaux",    jh:0.25, clientJh:0.25, mandatory:false, counter:true  },
-      { phase:"Formation", name:"Production documentation & supports", jh:0.50, clientJh:0,    mandatory:true,  counter:false },
-    ]
-  },
-  {
-    id: "ged", name: "GED",
-    desc: "Mise en place de la gestion documentaire SharePoint avec architecture des métadonnées. Tarif minimum 2 000 €.",
-    weeksBase: 1, weeksMax: 2,
-    minimum: 2000,
-    lignes: [
-      { phase:"Cadrage", name:"Kick-off",                                       jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Cadrage", name:"Atelier gestion documentaire + métadonnées",     jh:0.50, clientJh:0.50, mandatory:true,  counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page gestion documentaire",    jh:2.00, clientJh:0,    mandatory:true,  counter:false },
-      { phase:"Recette & Validation", name:"Recette et validation finale",       jh:0.50, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Formation", name:"Production documentation & supports",           jh:0.50, clientJh:0,    mandatory:false, counter:false },
-    ]
-  },
-  {
-    id: "trombi", name: "Trombinoscope",
-    desc: "Mise en place d'un trombinoscope SharePoint. Tarif minimum 3 000 € — peut évoluer selon la complexité de l'AD.",
-    weeksBase: 1, weeksMax: 2,
-    minimum: 3000,
-    lignes: [
-      { phase:"Cadrage", name:"Kick-off",                              jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Cadrage", name:"Atelier recueil des besoins",           jh:0.25, clientJh:0.25, mandatory:true,  counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Page annexe — Trombinoscope", jh:1.00, clientJh:0, mandatory:true, counter:false },
-      { phase:"Paramétrage & Réalisation", name:"Alimentation Active Directory", jh:2.00, clientJh:0, mandatory:true, counter:false, note:"2j minimum — selon complexité" },
-      { phase:"Formation", name:"Formation administrateurs",            jh:0.50, clientJh:0.50, mandatory:false, counter:true  },
-      { phase:"Formation", name:"Formation contributeurs",              jh:0.50, clientJh:0.50, mandatory:false, counter:true  },
-    ]
-  },
-];
-
-// State
-const state = {};
-PACKAGES.forEach(pkg => {
-  state[pkg.id] = pkg.lignes.map(l => ({
-    checked: l.mandatory,
-    sessions: 1,
-  }));
-});
-
-function fmt(n) {
-  return new Intl.NumberFormat('fr-FR', { style:'currency', currency:'EUR', maximumFractionDigits:0 }).format(n);
-}
-function fmtJH(n) {
-  if (!n || n === 0) return '—';
-  return n.toFixed(2).replace('.', ',') + ' J/H';
-}
-
-function getJH(l, s) {
-  return l.counter ? l.jh * s.sessions : l.jh;
-}
-function getClientJH(l, s) {
-  if (!l.clientJh) return 0;
-  return l.counter ? l.clientJh * s.sessions : l.clientJh;
-}
-
-function calcTotals(pkg) {
-  let jh = 0, clientJh = 0, price = 0;
-  pkg.lignes.forEach((l, i) => {
-    const s = state[pkg.id][i];
-    if (s.checked) {
-      jh += getJH(l, s);
-      clientJh += getClientJH(l, s);
-      price += getJH(l, s) * TJM;
-    }
-  });
-  if (pkg.minimum) price = Math.max(pkg.minimum, price);
-  // weeks: rough estimate based on prestataire JH
-  const weeks = pkg.weeksMax ? `${pkg.weeksBase} – ${pkg.weeksMax}` : `${pkg.weeksBase}`;
-  return { jh, clientJh, price, weeks };
-}
-
-function updateTotals(pkg) {
-  const { jh, clientJh, price, weeks } = calcTotals(pkg);
-  const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
-  set(`badge-amt-${pkg.id}`, fmt(price));
-  set(`badge-jh-${pkg.id}`, fmtJH(jh));
-  set(`foot-jh-${pkg.id}`, fmtJH(jh));
-  set(`foot-cjh-${pkg.id}`, clientJh > 0 ? fmtJH(clientJh) : '—');
-  set(`foot-price-${pkg.id}`, fmt(price));
-  set(`foot-weeks-${pkg.id}`, `${weeks} sem.`);
-
-  pkg.lignes.forEach((l, i) => {
-    const s = state[pkg.id][i];
-    const active = s.checked;
-    const jhVal = getJH(l, s);
-    const cjhVal = getClientJH(l, s);
-
-    const jhEl = document.getElementById(`jh-${pkg.id}-${i}`);
-    if (jhEl) { jhEl.textContent = active ? fmtJH(jhVal) : '—'; jhEl.className = 'cell-right ' + (active ? 'cell-bold' : 'cell-zero'); }
-
-    const cjhEl = document.getElementById(`cjh-${pkg.id}-${i}`);
-    if (cjhEl) { cjhEl.textContent = (active && cjhVal > 0) ? fmtJH(cjhVal) : '—'; cjhEl.className = 'cell-right ' + (active && cjhVal > 0 ? 'cell-client' : 'cell-zero'); }
-
-    const priceEl = document.getElementById(`price-${pkg.id}-${i}`);
-    if (priceEl) { priceEl.textContent = active ? fmt(jhVal * TJM) : '—'; priceEl.className = 'cell-right ' + (active ? 'cell-bold' : 'cell-zero'); }
-  });
-}
-
-function toggle(pkgId, idx) {
-  state[pkgId][idx].checked = !state[pkgId][idx].checked;
-  const row = document.getElementById(`row-${pkgId}-${idx}`);
-  if (row) row.dataset.active = state[pkgId][idx].checked;
-  const counter = document.getElementById(`counter-${pkgId}-${idx}`);
-  if (counter) counter.style.visibility = state[pkgId][idx].checked ? 'visible' : 'hidden';
-  updateTotals(PACKAGES.find(p => p.id === pkgId));
-}
-
-function changeSession(pkgId, idx, delta) {
-  const s = state[pkgId][idx];
-  s.sessions = Math.max(1, s.sessions + delta);
-  document.getElementById(`sess-${pkgId}-${idx}`).textContent = s.sessions;
-  updateTotals(PACKAGES.find(p => p.id === pkgId));
-}
-
-function resetAll() {
-  PACKAGES.forEach(pkg => {
-    state[pkg.id] = pkg.lignes.map(l => ({ checked: l.mandatory, sessions: 1 }));
-    pkg.lignes.forEach((l, i) => {
-      const cb = document.getElementById(`cb-${pkg.id}-${i}`);
-      if (cb) cb.checked = l.mandatory;
-      const row = document.getElementById(`row-${pkg.id}-${i}`);
-      if (row) row.dataset.active = l.mandatory;
-      const sessEl = document.getElementById(`sess-${pkg.id}-${i}`);
-      if (sessEl) sessEl.textContent = '1';
-      const counter = document.getElementById(`counter-${pkg.id}-${i}`);
-      if (counter) counter.style.visibility = l.mandatory ? 'visible' : 'hidden';
-    });
-    updateTotals(pkg);
-  });
-}
-
-function updateClientName() {
-  const name = document.getElementById('clientName').value;
-  document.querySelectorAll('.client-name-display').forEach(el => {
-    el.textContent = name ? `— ${name}` : '';
-  });
-}
-
-function switchTab(id) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.pkg === id));
-  document.querySelectorAll('.pkg-panel').forEach(p => p.classList.toggle('active', p.dataset.pkg === id));
-}
-
-// ── BUILD UI ──────────────────────────────────────────────────────────────────
-const tabsEl   = document.getElementById('tabs');
-const panelsEl = document.getElementById('panels');
-
-PACKAGES.forEach((pkg, pi) => {
-  // Tab
-  const tab = document.createElement('div');
-  tab.className = 'tab' + (pi === 0 ? ' active' : '');
-  tab.dataset.pkg = pkg.id;
-  tab.textContent = pkg.name;
-  tab.onclick = () => switchTab(pkg.id);
-  tabsEl.appendChild(tab);
-
-  // Panel
-  const panel = document.createElement('div');
-  panel.className = 'pkg-panel' + (pi === 0 ? ' active' : '');
-  panel.dataset.pkg = pkg.id;
-
-  const { jh: iJH, clientJh: iCJH, price: iPrice, weeks: iWeeks } = calcTotals(pkg);
-
-  // Group by phase
-  const phases = [], phaseMap = {};
-  pkg.lignes.forEach((l, i) => {
-    if (!phaseMap[l.phase]) { phaseMap[l.phase] = []; phases.push(l.phase); }
-    phaseMap[l.phase].push({ ...l, idx: i });
-  });
-
-  let rowsHTML = `
-    <div class="col-headers">
-      <div class="col-hdr"></div>
-      <div class="col-hdr">Prestation</div>
-      <div class="col-hdr center">Sessions</div>
-      <div class="col-hdr right">J/H Presta</div>
-      <div class="col-hdr right">J/H Client</div>
-      <div class="col-hdr right">Montant HT</div>
-      <div class="col-hdr right">Statut</div>
-    </div>`;
-
-  phases.forEach(phase => {
-    rowsHTML += `<div class="phase-header">${phase}</div>`;
-    phaseMap[phase].forEach(l => {
-      const s = state[pkg.id][l.idx];
-      const jhVal = getJH(l, s);
-      const cjhVal = getClientJH(l, s);
-      const badge = l.mandatory
-        ? `<span class="badge-sm badge-incl">Inclus</span>`
-        : `<span class="badge-sm badge-opt">Optionnel</span>`;
-      const clientBadge = '';
-
-      const counter = l.counter
-        ? `<div class="counter-wrap" id="counter-${pkg.id}-${l.idx}" style="visibility:${s.checked ? 'visible' : 'hidden'}">
-            <button class="counter-btn" onclick="changeSession('${pkg.id}',${l.idx},-1)">−</button>
-            <span class="counter-val" id="sess-${pkg.id}-${l.idx}">1</span>
-            <button class="counter-btn" onclick="changeSession('${pkg.id}',${l.idx},1)">+</button>
-           </div>`
-        : `<div class="counter-wrap hidden"><span>—</span></div>`;
-
-      rowsHTML += `
-        <div class="presta-row" id="row-${pkg.id}-${l.idx}" data-active="${s.checked}">
-          <div>
-            <label class="toggle">
-              <input type="checkbox" id="cb-${pkg.id}-${l.idx}" ${s.checked ? 'checked' : ''}
-                onchange="toggle('${pkg.id}', ${l.idx})">
-              <span class="slider"></span>
-            </label>
-          </div>
-          <div>
-            <div class="presta-name">${l.name}${clientBadge}</div>
-            ${l.note ? `<div class="presta-note">${l.note}</div>` : ''}
-          </div>
-          ${counter}
-          <div class="cell-right ${s.checked ? 'cell-bold' : 'cell-zero'}" id="jh-${pkg.id}-${l.idx}">${s.checked ? fmtJH(jhVal) : '—'}</div>
-          <div class="cell-right ${s.checked && cjhVal > 0 ? 'cell-client' : 'cell-zero'}" id="cjh-${pkg.id}-${l.idx}">${s.checked && cjhVal > 0 ? fmtJH(cjhVal) : '—'}</div>
-          <div class="cell-right ${s.checked ? 'cell-bold' : 'cell-zero'}" id="price-${pkg.id}-${l.idx}">${s.checked ? fmt(jhVal * TJM) : '—'}</div>
-          <div style="text-align:right">${badge}</div>
-        </div>`;
-    });
-  });
-
-  panel.innerHTML = `
-    <div class="pkg-header">
-      <div>
-        <div class="pkg-title">${pkg.name} <span class="client-name-display" style="font-size:.9rem;font-weight:400;color:rgba(249,195,78,.6)"></span></div>
-        <div class="pkg-desc">${pkg.desc}</div>
+<main class="main">
+  <div class="layout">
+    <aside class="panel">
+      <div class="panel-head"><div class="panel-title">Assistant de qualification</div><div class="panel-sub">Renseigne le contexte, puis applique les suggestions. Tout reste modifiable manuellement.</div></div>
+      <div class="form">
+        <div class="field-grid">
+          <div class="field"><label>Collaborateurs</label><input id="ctxEmployees" type="number" min="0" placeholder="ex. 850"></div>
+          <div class="field"><label>Nb espaces</label><input id="ctxSpaces" type="number" min="1" placeholder="ex. 5"></div>
+        </div>
+        <div class="field"><label>Population terrain</label><select id="ctxField"><option value="unknown">À confirmer</option><option value="no">Non / minoritaire</option><option value="yes">Oui, population significative</option></select></div>
+        <div class="field"><label>Existant SharePoint</label><select id="ctxSP"><option value="unknown">À confirmer</option><option value="yes">Oui, déjà structuré</option><option value="partial">Partiel / hétérogène</option><option value="no">Non / nouveau départ</option></select></div>
+        <div class="field"><label>Gestion documentaire</label><select id="ctxDocs"><option value="none">Faible / non prioritaire</option><option value="simple">Filtres simples</option><option value="complex">Filtres complexes / taxonomie</option></select></div>
+        <div class="field"><label>Workflow / validation</label><select id="ctxWorkflow"><option value="none">Aucun</option><option value="simple">Simple</option><option value="complex">Complexe / à cadrer</option></select></div>
+        <div class="field"><label>Nombre de workflows</label><input id="ctxWorkflowCount" type="number" min="1" step="1" value="1"></div>
+        <div class="field"><label>Besoin de cadrage</label><select id="ctxMaturity"><option value="clear">Besoin clair</option><option value="partial">Besoin partiellement cadré</option><option value="unclear">Forte incertitude</option></select></div>
+        <div class="field"><label>Hypothèses / notes</label><textarea id="ctxNotes" placeholder="Ex. intranet existant vieillissant, besoin de centraliser les actualités, contributeurs à former..."></textarea></div>
+        <div class="assistant-actions"><button class="btn btn-dark" onclick="applyAssistant()">Appliquer les suggestions</button><button class="btn btn-soft" onclick="previewAssistant()">Voir logique</button></div>
+        <div id="suggestionBox" class="suggestion-box"></div>
       </div>
-      <div class="badge-card">
-        <div class="lbl">Durée estimée</div>
-        <div class="val" id="foot-weeks-${pkg.id}">${iWeeks} sem.</div>
-        <div class="sub">calendrier indicatif</div>
+    </aside>
+    <section class="workspace">
+      <div class="table-wrap">
+        <div class="col-headers"><div></div><div class="col-hdr">Prestation</div><div class="col-hdr right">J/H</div><div class="col-hdr right">Montant HT</div><div></div></div>
+        <div id="lines"></div>
       </div>
-      <div class="badge-card">
-        <div class="lbl">Estimation HT</div>
-        <div class="val" id="badge-amt-${pkg.id}">${fmt(iPrice)}</div>
-        <div class="sub" id="badge-jh-${pkg.id}">${fmtJH(iJH)}</div>
+      <div class="summary">
+        <div class="summary-top">
+          <div class="metric"><div class="metric-label">Charge exacte</div><div class="metric-val" id="jh-exact">0 j</div><div class="metric-sub">jours/homme sélectionnés</div></div>
+          <div class="metric"><div class="metric-label">Total HT</div><div class="metric-val" id="total-ht">0 €</div><div class="metric-sub">base catalogue</div></div>
+          <div class="metric"><div class="metric-label">Total ajusté</div><div class="metric-val" id="total-ajuste">0 €</div><div class="metric-sub" id="ajuste-sub">aucune marge</div></div>
+          <div class="metric"><div class="metric-label">Risque projet</div><div class="metric-val" id="risk-level">—</div><div class="metric-sub" id="risk-sub">selon sélection</div></div>
+        </div>
+        <div class="summary-bottom">
+          <div><div class="marge-title">Profil de cadrage</div><div class="marge-btns"><button class="marge-btn active" onclick="setMarge(this,0)">Besoin clair — +0%</button><button class="marge-btn" onclick="setMarge(this,.15)">Partiellement cadré — +15%</button><button class="marge-btn" onclick="setMarge(this,.25)">Forte incertitude — +25%</button></div></div>
+          <div><div class="marge-title">Fourchette à garder en tête</div><div class="fourchette" id="fourchette"></div></div>
+        </div>
+        <div id="alerts" class="alerts"></div>
       </div>
-    </div>
-    <div class="pkg-table-wrap">
-      ${rowsHTML}
-    </div>
-    <div class="pkg-footer">
-      <div class="footer-label" style="grid-column:1/3">Total estimatif HT${pkg.minimum ? ' *' : ''}</div>
-      <div></div>
-      <div class="footer-val prestataire" id="foot-jh-${pkg.id}">${fmtJH(iJH)}</div>
-      <div class="footer-val client" id="foot-cjh-${pkg.id}">${iCJH > 0 ? fmtJH(iCJH) : '—'}</div>
-      <div class="footer-val price" id="foot-price-${pkg.id}">${fmt(iPrice)}</div>
-      <div></div>
-      ${pkg.minimum ? `<div class="footer-min">* Minimum forfaitaire : ${fmt(pkg.minimum)} — majoré selon complexité AD</div>` : ''}
-    </div>`;
-
-  panelsEl.appendChild(panel);
-});
-
-// Legend
-panelsEl.insertAdjacentHTML('beforeend', `
-  <div class="legend">
-    <span>🔘 Toggle = activer / désactiver</span>
-    <span>＋／－ = nombre de sessions (copil, formations)</span>
-    <span style="color:#1a6fa8">🔵 J/H Client = charge de présence côté client</span>
-    <span>↺ Réinitialiser remet les défauts du package</span>
-    <span>🖨 Imprimer = résumé imprimable</span>
+      <div class="export-box" id="exportBox"><div class="export-head"><div><div class="export-title">Résumé interne</div><div class="panel-sub">Copiable dans Teams, CRM ou compte-rendu.</div></div><div><span class="copy-status" id="copyStatus">Copié ✓</span> <button class="btn btn-soft" onclick="copyExport()">Copier</button></div></div><textarea id="exportText"></textarea></div>
+      <div class="legend"><span>Toggle = activer / désactiver</span><span>ℹ = référentiel inclus / exclu</span><span>Les accordéons affichent le total par phase</span><span>Le risque est indicatif, pas contractuel</span></div>
+    </section>
   </div>
-`);
+</main>
+<div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)"><div class="modal" role="dialog" aria-modal="true"><div class="modal-head"><div class="modal-title" id="modalTitle"></div><button class="modal-close" onclick="closeModal(event)">×</button></div><div class="modal-body" id="modalBody"></div></div></div>
+<script>
+const TJM = 1000; let coef = 0;
+const CATALOGUE = [
+  { phase:'Cadrage', name:'Kick-off', jh:.25, mandatory:true, include:['Alignement contexte, objectifs et interlocuteurs','Validation du déroulé projet','Première sécurisation des risques'], exclude:['Atelier métier détaillé','Compte-rendu exhaustif'] },
+  { phase:'Cadrage', name:'Atelier recueil des besoins', jh:.25, tags:['needs'], include:['Qualification des usages attendus','Identification des populations et irritants','Synthèse des besoins prioritaires'], exclude:['Conception graphique','Spécifications fonctionnelles détaillées'] },
+  { phase:'Cadrage', name:'Atelier architecture', jh:.25, tags:['architecture'], include:['Structure de navigation V1','Arborescence des espaces principaux','Règles de nommage de base'], exclude:['Architecture documentaire détaillée','Migration de contenus'] },
+  { phase:'Cadrage', name:'Atelier contenu des pages', jh:.25, tags:['content'], include:['Cadrage des pages clés','Identification des blocs attendus','Priorisation des contenus'], exclude:['Rédaction complète des contenus','Design sur-mesure'] },
+  { phase:'Cadrage', name:'Atelier gestion documentaire', jh:.25, tags:['docs'], include:['Axes de recherche documentaire','Métadonnées principales','Logique de filtres'], exclude:['Reprise documentaire massive','Plan de classement GED complet'] },
+  { phase:'Cadrage', name:'Atelier gouvernance', jh:.125, tags:['governance'], include:['Rôles contributeurs / administrateurs','Règles de publication','Principes de droits'], exclude:['Matrice de permissions exhaustive','Conduite du changement complète'] },
+  { phase:'Conception', name:'Maquettage + validation', jh:1, tags:['mockup'], include:['Maquette fonctionnelle ou visuelle','Itération de validation cadrée','Support de décision interne'], exclude:['Direction artistique complète','Itérations illimitées'] },
+  { phase:'Intégration', name:"Page d'accueil", jh:1, tags:['home'], include:['Configuration de la homepage','Mise en place des composants standards','Adaptation responsive standard'], exclude:['Création graphique avancée','Développement spécifique'] },
+  { phase:'Intégration', name:'Actualités', jh:.5, tags:['news'], include:['Configuration des actualités','Catégorisation simple','Affichage sur page'], exclude:['Workflow éditorial complexe','Newsletter avancée'] },
+  { phase:'Intégration', name:'Annuaire / Trombinoscope', jh:.5, tags:['directory'], include:['Configuration du composant annuaire','Affichage des profils disponibles','Filtres simples si données disponibles'], exclude:['Nettoyage Entra ID','Synchronisation RH spécifique'] },
+  { phase:'Intégration', name:'Gestion documentaire — filtres simples', jh:1, tags:['docsSimple'], include:['Bibliothèque documentaire structurée','Colonnes simples','Affinage standard'], exclude:['Taxonomie complexe','Search schema avancé'] },
+  { phase:'Intégration', name:'Gestion documentaire — filtres complexes', jh:1.5, tags:['docsComplex'], include:['Métadonnées avancées','Logique de filtres plus fine','Préparation pour recherche avancée'], exclude:['Migration documentaire','Développements de recherche spécifiques'] },
+  { phase:'Intégration', name:'Page simple / textuelle', jh:.125, tags:['page'], include:['Création d’une page simple','Mise en forme standard','Insertion de contenus fournis'], exclude:['Rédaction','Design spécifique'] },
+  { phase:'Intégration', name:'Workflow simple', jh:.5, qty:true, tags:['workflowSimple'], include:['Mise en place d’un flux simple','Validation basique','Test fonctionnel'], exclude:['Processus multi-branches','Intégration SI externe'] },
+  { phase:'Intégration', name:'Workflow complexe', jh:1, qty:true, tags:['workflowComplex'], note:'Périmètre à définir en atelier', include:['Cadrage technique initial','Mise en place d’un workflow avancé limité','Tests fonctionnels'], exclude:['Power Automate très avancé','Développements spécifiques','Connecteurs métier'] },
+  { phase:'Intégration', name:'Développement spécifique', free:true, tags:['custom'], include:['Ligne libre pour besoin hors catalogue','Estimation manuelle','À sécuriser avant engagement'], exclude:['Engagement ferme sans cadrage','Maintenance non prévue'] },
+  { phase:'Recette', name:'Recette V1', jh:.25, tags:['acceptance'], include:['Contrôle fonctionnel global','Liste des retours V1','Validation avant ajustements'], exclude:['Recette métier complète côté client','Tests de charge'] },
+  { phase:'Recette', name:'Intégration des retours (2 rounds inclus)', jh:.5, tags:['rounds'], include:['Corrections mineures','Deux cycles de retours cadrés','Ajustements de configuration'], exclude:['Refonte complète après validation','Nouveaux besoins majeurs'] },
+  { phase:'Formation', name:'Formation administrateurs', jh:.25, tags:['adminTraining'], note:"2h, jusqu'à 8 personnes", include:['Session administrateurs','Démonstration des gestes clés','Questions / réponses'], exclude:['Support e-learning complet','Formation individuelle'] },
+  { phase:'Formation', name:'Formation contributeurs', jh:.25, tags:['contribTraining'], note:"2h, jusqu'à 8 personnes", include:['Session contributeurs','Création / publication de contenus','Bonnes pratiques simples'], exclude:['Accompagnement long terme','Formation métier personnalisée'] },
+  { phase:'Formation', name:'Webinar de présentation', jh:.125, tags:['webinar'], note:'1h', include:['Présentation utilisateurs finaux','Démonstration des usages clés','Session courte de lancement'], exclude:['Support change complet','Animation de communauté'] }
+];
+const state = CATALOGUE.map(l => ({ checked:!!l.mandatory, freeJh:.5, freeName:'', qty:1 }));
+const phases = [...new Set(CATALOGUE.map(l=>l.phase))]; const phaseClosed = Object.fromEntries(phases.map(p=>[p,false]));
+function fmtJH(n){ if(!n)return '0 j'; const s=(n%1===0?String(n):n.toFixed(3).replace(/\.?0+$/,'')).replace('.',','); return s+' j'; }
+function fmtEur(n){ return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n); }
+function roundHalf(n){ return Math.round(n*2)/2; }
+function hasTag(tag){ return CATALOGUE.some((l,i)=>state[i].checked && l.tags && l.tags.includes(tag)); }
+function getLineJH(l,i){ return l.free ? (parseFloat(state[i].freeJh)||0) : l.jh; }
+function getTotalJH(){ return CATALOGUE.reduce((t,l,i)=> t + (state[i].checked ? getLineJH(l,i) : 0),0); }
+function getPhaseJH(phase){ return CATALOGUE.reduce((t,l,i)=> t + (l.phase===phase && state[i].checked ? getLineJH(l,i) : 0),0); }
+function getPhaseCount(phase){ return CATALOGUE.filter((l,i)=>l.phase===phase && state[i].checked).length; }
+function getRisk(){ let score=0, reasons=[]; const total=getTotalJH(); if(hasTag('workflowComplex')){score+=2;reasons.push('workflow complexe');} if(hasTag('custom')){score+=2;reasons.push('développement spécifique');} if(hasTag('docsComplex')){score+=1;reasons.push('gestion documentaire complexe');} if(total>5){score+=1;reasons.push('charge > 5 j');} if(coef>=.25){score+=2;reasons.push('forte incertitude');} else if(coef>=.15){score+=1;reasons.push('besoin partiellement cadré');} if(score>=4)return {level:'Fort', cls:'risk-high', reasons}; if(score>=2)return {level:'Moyen', cls:'risk-mid', reasons}; return {level:'Faible', cls:'risk-low', reasons}; }
+function setCheckedByTag(tag,value=true){ CATALOGUE.forEach((l,i)=>{ if(l.tags && l.tags.includes(tag)) state[i].checked=value; }); }
+function setQtyByTag(tag,qty){ CATALOGUE.forEach((l,i)=>{ if(l.tags && l.tags.includes(tag) && l.qty) state[i].qty=Math.max(1, parseInt(qty,10)||1); }); }
+function update(){ const jh=getTotalJH(), ht=jh*TJM, adjusted=ht*(1+coef), jhAdj=jh*(1+coef); document.getElementById('jh-exact').textContent=fmtJH(jh); document.getElementById('total-ht').textContent=fmtEur(ht); document.getElementById('total-ajuste').textContent=fmtEur(adjusted); document.getElementById('ajuste-sub').textContent=coef>0? '+'+Math.round(coef*100)+'% appliqué':'aucune marge'; const r=getRisk(); const riskEl=document.getElementById('risk-level'); riskEl.textContent=r.level; riskEl.className='metric-val '+r.cls; document.getElementById('risk-sub').textContent=r.reasons.length ? r.reasons.join(', ') : 'sélection standard'; const bas=roundHalf(jh), haut=roundHalf(jhAdj); document.getElementById('fourchette').innerHTML = jh===0 ? 'Sélectionne des prestations pour voir la fourchette.' : (coef===0||bas===haut ? 'À garder en tête : environ <strong>'+fmtJH(bas)+'</strong>' : 'Fourchette interne : entre <strong>'+fmtJH(bas)+'</strong> et <strong>'+fmtJH(haut)+'</strong>'); CATALOGUE.forEach((l,i)=>{ const row=document.getElementById('row-'+i); const cb=document.getElementById('cb-'+i); if(row) row.dataset.active=state[i].checked; if(cb) cb.checked=state[i].checked; const q=document.getElementById('qty-'+i); if(q) q.value=state[i].qty; if(l.free){ const p=document.getElementById('price-free-'+i); if(p){p.className='cell-right '+(state[i].checked?'cell-bold':'cell-zero'); p.textContent=state[i].checked?fmtEur(getLineJH(l,i)*TJM):'—';} return;} const j=document.getElementById('jh-'+i), p=document.getElementById('price-'+i); if(j){j.className='cell-right '+(state[i].checked?'cell-bold':'cell-zero'); j.textContent=state[i].checked?fmtJH(getLineJH(l,i)):'—';} if(p){p.className='cell-right '+(state[i].checked?'cell-bold':'cell-zero'); p.textContent=state[i].checked?fmtEur(getLineJH(l,i)*TJM):'—';} }); phases.forEach(p=>{ const c=document.getElementById('phase-count-'+slug(p)), j=document.getElementById('phase-jh-'+slug(p)); if(c)c.textContent=getPhaseCount(p)+' sélectionnée'+(getPhaseCount(p)>1?'s':''); if(j)j.textContent=fmtJH(getPhaseJH(p)); }); updateAlerts(); }
+function updateAlerts(){ const a=[]; if(hasTag('docsComplex')&&!hasTag('docs')) a.push('Gestion documentaire complexe sélectionnée : prévoir un atelier gestion documentaire.'); if((hasTag('workflowSimple')||hasTag('workflowComplex'))&&!hasTag('governance')) a.push('Workflow sélectionné : un point gouvernance est conseillé pour sécuriser rôles et validation.'); if(hasTag('custom')) a.push('Développement spécifique : à traiter comme hypothèse tant que le périmètre n’est pas cadré.'); if(getTotalJH()>6) a.push('Charge supérieure à 6 j : prévoir une validation interne avant engagement.'); const el=document.getElementById('alerts'); el.innerHTML=a.map(x=>'<div class="alert">⚠ '+x+'</div>').join(''); }
+function toggleLine(i){ if(CATALOGUE[i].mandatory)return; state[i].checked=!state[i].checked; update(); }
+function setMarge(btn,c){ coef=c; document.querySelectorAll('.marge-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); update(); }
+function slug(s){ return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]/g,'-').toLowerCase(); }
+function readCtx(){ return { emp:+document.getElementById('ctxEmployees').value||0, spaces:+document.getElementById('ctxSpaces').value||0, field:document.getElementById('ctxField').value, sp:document.getElementById('ctxSP').value, docs:document.getElementById('ctxDocs').value, workflow:document.getElementById('ctxWorkflow').value, workflowCount:Math.max(1, parseInt(document.getElementById('ctxWorkflowCount').value,10)||1), maturity:document.getElementById('ctxMaturity').value, notes:document.getElementById('ctxNotes').value.trim() }; }
+function assistantTags(){ const c=readCtx(); const tags=['needs','architecture','content','home','news','acceptance','adminTraining']; if(c.sp==='no'||c.sp==='partial'||c.sp==='unknown') tags.push('governance'); if(c.docs==='simple') tags.push('docs','docsSimple'); if(c.docs==='complex') tags.push('docs','docsComplex','governance'); if(c.workflow==='simple') tags.push('workflowSimple','governance'); if(c.workflow==='complex') tags.push('workflowComplex','governance'); if(c.field==='yes'||c.emp>=500) tags.push('directory','contribTraining','webinar'); if(c.spaces>=4) tags.push('mockup','contribTraining'); if(c.maturity==='partial') coef=.15; if(c.maturity==='unclear') coef=.25; if(c.maturity==='clear') coef=0; return [...new Set(tags)]; }
+function previewAssistant(){ const tags=assistantTags(); const names=CATALOGUE.filter(l=>l.tags && l.tags.some(t=>tags.includes(t))).map(l=>l.name); const box=document.getElementById('suggestionBox'); box.style.display='block'; box.innerHTML='<strong>Suggestions détectées :</strong><br>'+names.map(n=>'• '+n).join('<br>')+'<br><br><strong>Profil :</strong> '+(coef===0?'besoin clair':coef===.15?'partiellement cadré':'forte incertitude'); }
+function applyAssistant(){ const tags=assistantTags(); CATALOGUE.forEach((l,i)=>{ if(!l.mandatory) state[i].checked=false; }); tags.forEach(t=>setCheckedByTag(t,true)); const c=readCtx(); if(c.workflow==='simple') setQtyByTag('workflowSimple', c.workflowCount); if(c.workflow==='complex') setQtyByTag('workflowComplex', c.workflowCount); document.querySelectorAll('.marge-btn').forEach((b,idx)=>b.classList.toggle('active',(coef===0&&idx===0)||(coef===.15&&idx===1)||(coef===.25&&idx===2))); previewAssistant(); update(); }
+function resetAll(){ CATALOGUE.forEach((l,i)=>{state[i].checked=!!l.mandatory;state[i].freeJh=.5;state[i].freeName='';state[i].qty=1;}); ['ctxEmployees','ctxSpaces','ctxNotes','clientName'].forEach(id=>{const el=document.getElementById(id); if(el)el.value='';}); ['ctxField','ctxSP'].forEach(id=>document.getElementById(id).value='unknown'); document.getElementById('ctxDocs').value='none'; document.getElementById('ctxWorkflow').value='none'; document.getElementById('ctxWorkflowCount').value='1'; document.getElementById('ctxMaturity').value='clear'; coef=0; document.querySelectorAll('.marge-btn').forEach((b,idx)=>b.classList.toggle('active',idx===0)); document.getElementById('suggestionBox').style.display='none'; document.getElementById('exportBox').style.display='none'; CATALOGUE.forEach((l,i)=>{ if(l.free){ const fn=document.getElementById('free-name-'+i), fj=document.getElementById('free-jh-'+i); if(fn)fn.value=''; if(fj)fj.value='0.5'; }}); update(); }
+function generateExport(){ const client=document.getElementById('clientName').value.trim()||'Non renseigné'; const c=readCtx(); const selected=CATALOGUE.map((l,i)=>({l,i})).filter(x=>state[x.i].checked); const r=getRisk(); let txt='Client : '+client+'\n'; txt+='Date : '+new Date().toLocaleDateString('fr-FR')+'\n\n'; txt+='CONTEXTE\n'; txt+='- Collaborateurs : '+(c.emp||'À confirmer')+'\n- Espaces : '+(c.spaces||'À confirmer')+'\n- Population terrain : '+labelSelect('ctxField')+'\n- Existant SharePoint : '+labelSelect('ctxSP')+'\n- Gestion documentaire : '+labelSelect('ctxDocs')+'\n- Workflow / validation : '+labelSelect('ctxWorkflow')+(c.workflow!=='none'?' ('+c.workflowCount+' workflow'+(c.workflowCount>1?'s':'')+')':'')+'\n- Niveau de cadrage : '+labelSelect('ctxMaturity')+'\n'; if(c.notes) txt+='- Notes : '+c.notes+'\n'; txt+='\nPRESTATIONS SÉLECTIONNÉES\n'; phases.forEach(p=>{ const lines=selected.filter(x=>x.l.phase===p); if(!lines.length)return; txt+='\n'+p+' — '+fmtJH(getPhaseJH(p))+'\n'; lines.forEach(x=>{ let name=x.l.free ? (state[x.i].freeName||x.l.name) : x.l.name; if(x.l.qty) name += ' × '+(state[x.i].qty||1); txt+='- '+name+' : '+fmtJH(getLineJH(x.l,x.i))+'\n'; }); }); txt+='\nSYNTHÈSE\n'; txt+='- Charge exacte : '+fmtJH(getTotalJH())+'\n- Total HT base catalogue : '+fmtEur(getTotalJH()*TJM)+'\n- Profil de cadrage : '+(coef===0?'Besoin clair (+0%)':coef===.15?'Partiellement cadré (+15%)':'Forte incertitude (+25%)')+'\n- Total ajusté HT : '+fmtEur(getTotalJH()*TJM*(1+coef))+'\n- Risque projet : '+r.level+(r.reasons.length?' ('+r.reasons.join(', ')+')':'')+'\n'; const alerts=[...document.querySelectorAll('.alert')].map(el=>el.textContent.replace('⚠ ','').trim()); if(alerts.length){ txt+='\nPOINTS DE VIGILANCE\n'; alerts.forEach(a=>txt+='- '+a+'\n'); } document.getElementById('exportText').value=txt; document.getElementById('exportBox').style.display='block'; document.getElementById('exportBox').scrollIntoView({behavior:'smooth',block:'nearest'}); }
+function labelSelect(id){ const el=document.getElementById(id); return el.options[el.selectedIndex].text; }
+async function copyExport(){ const t=document.getElementById('exportText'); t.select(); try{ await navigator.clipboard.writeText(t.value); }catch(e){ document.execCommand('copy'); } const s=document.getElementById('copyStatus'); s.style.display='inline'; setTimeout(()=>s.style.display='none',1600); }
+function openInfo(i){ const l=CATALOGUE[i]; document.getElementById('modalTitle').textContent=l.name; document.getElementById('modalBody').innerHTML='<div>'+(l.note||'Référentiel interne de cadrage pour homogénéiser les estimations.')+'</div><div class="included"><div class="mini-title">Inclus</div><ul>'+l.include.map(x=>'<li>'+x+'</li>').join('')+'</ul></div><div class="excluded"><div class="mini-title">Non inclus / à cadrer séparément</div><ul>'+l.exclude.map(x=>'<li>'+x+'</li>').join('')+'</ul></div>'; document.getElementById('modalBackdrop').style.display='flex'; }
+function closeModal(e){ if(!e || e.target.id==='modalBackdrop' || e.target.classList.contains('modal-close')) document.getElementById('modalBackdrop').style.display='none'; }
+function buildUI(){ const root=document.getElementById('lines'); let cur=''; CATALOGUE.forEach((l,i)=>{ if(l.phase!==cur){ cur=l.phase; const ph=document.createElement('div'); ph.className='phase'; ph.id='phase-'+slug(cur); ph.innerHTML='<button class="phase-header" onclick="togglePhase(\''+slug(cur)+'\')"><span class="phase-left"><span class="chev">▼</span><span class="phase-name">'+cur+'</span></span><span class="phase-meta"><span class="pill" id="phase-count-'+slug(cur)+'">0 sélectionnée</span><span class="pill" id="phase-jh-'+slug(cur)+'">0 j</span></span></button><div class="phase-body" id="phase-body-'+slug(cur)+'"></div>'; root.appendChild(ph); } const body=document.getElementById('phase-body-'+slug(l.phase)); if(l.free){ const row=document.createElement('div'); row.className='free-row'; row.id='row-'+i; row.dataset.active=state[i].checked; row.innerHTML='<label class="toggle"><input type="checkbox" id="cb-'+i+'" onchange="state['+i+'].checked=this.checked;update()"><span class="slider"></span></label><input type="text" class="free-input" id="free-name-'+i+'" placeholder="Libellé prestation..." oninput="state['+i+'].freeName=this.value"><input type="number" class="free-jh" id="free-jh-'+i+'" value="0.5" min="0.125" step="0.125" oninput="state['+i+'].freeJh=parseFloat(this.value)||0;update()"><div class="cell-right cell-zero" id="price-free-'+i+'">—</div><button class="info-btn" onclick="openInfo('+i+')">i</button>'; body.appendChild(row); } else { const row=document.createElement('div'); row.className='presta-row'+(l.mandatory?' mandatory':''); row.id='row-'+i; row.dataset.active=state[i].checked; if(!l.mandatory) row.onclick=()=>toggleLine(i); row.innerHTML='<label class="toggle" onclick="event.stopPropagation()"><input type="checkbox" id="cb-'+i+'" '+(state[i].checked?'checked':'')+' '+(l.mandatory?'disabled':'')+' onchange="toggleLine('+i+')"><span class="slider"></span></label><div><div class="presta-name">'+l.name+'</div>'+(l.note?'<div class="presta-note">'+l.note+'</div>':'')+'</div>'+(l.qty?'<div class="qty-wrap"><span>'+fmtJH(l.jh)+'</span><span>×</span><input class="qty-input" id="qty-'+i+'" type="number" min="1" step="1" value="'+state[i].qty+'" onclick="event.stopPropagation()" oninput="state['+i+'].qty=Math.max(1,parseInt(this.value,10)||1);update()"></div>':'<div class="cell-right '+(state[i].checked?'cell-bold':'cell-zero')+'" id="jh-'+i+'">'+(state[i].checked?fmtJH(getLineJH(l,i)):'—')+'</div>')+'<div class="cell-right '+(state[i].checked?'cell-bold':'cell-zero')+'" id="price-'+i+'">'+(state[i].checked?fmtEur(getLineJH(l,i)*TJM):'—')+'</div><button class="info-btn" onclick="event.stopPropagation();openInfo('+i+')">i</button>'; body.appendChild(row); } }); }
+function togglePhase(sl){ const el=document.getElementById('phase-'+sl); el.classList.toggle('closed'); }
+buildUI(); update();
 </script>
 </body>
 </html>
